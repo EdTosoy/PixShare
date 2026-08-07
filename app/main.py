@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 
+from app.core.config import get_settings
+
+settings = get_settings()
+
 app = FastAPI(
-    title="PixShare API",
-    version="0.1.0",
+    title=settings.app_name,
+    version=settings.app_version,
 )
 
 
