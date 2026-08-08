@@ -1,7 +1,7 @@
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,6 +12,10 @@ from app.schemas.post import PostCreate, PostResponse, PostUpdate
 router = APIRouter(prefix="/posts", tags=["posts"])
 
 SessionDep = Annotated[AsyncSession, Depends(get_async_session)]
+
+LimitDep = Annotated[int, Query(ge=1, le=100)]
+OffsetDep = Annotated[int, Query(ge=0)]
+SortOrder = Literal["newest", "oldest"]
 
 
 @router.post(
@@ -38,8 +42,24 @@ async def create_post(
 )
 async def get_posts(
     session: SessionDep,
+    limit: LimitDep = 20,
+    offset: OffsetDep = 0,
+    file_type: str | None = None,
+    sort: SortOrder = "newest",
 ) -> list[Post]:
-    result = await session.execute(select(Post).order_by(Post.created_at.desc()))
+    query = select(Post)
+
+    if file_type is not None:
+        query = query.where(Post.file_type == file_type)
+
+    if sort == "newest":
+        query = query.order_by(Post.created_at.desc())
+    else:
+        query = query.order_by(Post.created_at.asc())
+
+    query = query.offset(offset).limit(limit)
+
+    result = await session.execute(query)
 
     return list(result.scalars().all())
 
@@ -105,7 +125,7 @@ async def update_post(
             detail="Post not found",
         )
 
-    update_data = post_data.model_dump(exclude_unset=True)
+    update_data: dict[str, object] = post_data.model_dump(exclude_unset=True)
 
     for field, value in update_data.items():
         setattr(post, field, value)

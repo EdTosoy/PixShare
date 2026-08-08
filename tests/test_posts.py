@@ -39,7 +39,7 @@ async def test_create_post(client: AsyncClient):
     assert post["url"] == "https://example.com/image.jpg"
     assert post["file_name"] == "image.jpg"
     assert post["file_type"] == "image/jpeg"
-    assert UUID(post["id"])
+    _ = UUID(post["id"])
 
 
 @pytest.mark.asyncio
@@ -54,6 +54,101 @@ async def test_get_posts(client: AsyncClient):
 
     assert len(posts) == 1
     assert posts[0]["caption"] == "Test post"
+
+
+@pytest.mark.asyncio
+async def test_get_posts_with_pagination(client: AsyncClient):
+    first = await create_test_post(client)
+    second = await create_test_post(client)
+    _third = await create_test_post(client)
+
+    response = await client.get("/posts?limit=2&offset=1")
+
+    assert response.status_code == 200
+
+    posts = cast(list[PostData], response.json())
+
+    assert len(posts) == 2
+    assert posts[0]["id"] == second["id"]
+    assert posts[1]["id"] == first["id"]
+
+
+@pytest.mark.asyncio
+async def test_get_posts_invalid_limit(client: AsyncClient):
+    response = await client.get("/posts?limit=101")
+
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_get_posts_invalid_offset(client: AsyncClient):
+    response = await client.get("/posts?offset=-1")
+
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_get_posts_filter_by_file_type(client: AsyncClient):
+    _ = await create_test_post(client)
+
+    response = await client.get("/posts?file_type=image/jpeg")
+
+    assert response.status_code == 200
+
+    posts = cast(list[PostData], response.json())
+
+    assert len(posts) == 1
+    assert posts[0]["file_type"] == "image/jpeg"
+
+
+@pytest.mark.asyncio
+async def test_get_posts_filter_by_file_type_no_match(client: AsyncClient):
+    _ = await create_test_post(client)
+
+    response = await client.get("/posts?file_type=image/png")
+
+    assert response.status_code == 200
+
+    posts = cast(list[PostData], response.json())
+
+    assert len(posts) == 0
+
+
+@pytest.mark.asyncio
+async def test_get_posts_sort_oldest(client: AsyncClient):
+    first = await create_test_post(client)
+    second = await create_test_post(client)
+
+    response = await client.get("/posts?sort=oldest")
+
+    assert response.status_code == 200
+
+    posts = cast(list[PostData], response.json())
+
+    assert posts[0]["id"] == first["id"]
+    assert posts[1]["id"] == second["id"]
+
+
+@pytest.mark.asyncio
+async def test_get_posts_sort_newest(client: AsyncClient):
+    first = await create_test_post(client)
+    second = await create_test_post(client)
+
+    response = await client.get("/posts?sort=newest")
+
+    assert response.status_code == 200
+
+    posts = cast(list[PostData], response.json())
+
+    assert posts[0]["id"] == second["id"]
+    assert posts[1]["id"] == first["id"]
+
+
+@pytest.mark.asyncio
+async def test_get_posts_invalid_sort(client: AsyncClient):
+    response = await client.get("/posts?sort=random")
+
+    assert response.status_code == 422
 
 
 @pytest.mark.asyncio
