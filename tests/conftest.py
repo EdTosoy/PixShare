@@ -1,5 +1,6 @@
 import os
 from collections.abc import AsyncGenerator
+from uuid import uuid4
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
@@ -11,9 +12,11 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.pool import NullPool
 
+from app.api.dependencies import get_current_user
 from app.db.session import get_async_session
 from app.main import app
 from app.models.post import Post
+from app.models.user import User
 
 TEST_DATABASE_URL = os.environ.get(
     "TEST_DATABASE_URL",
@@ -38,8 +41,19 @@ async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 @pytest_asyncio.fixture
-async def client():
+async def test_user() -> User:
+    async with test_session_factory() as session:
+        user = User(clerk_id="test_clerk_user")
+        session.add(user)
+        await session.commit()
+        await session.refresh(user)
+        return user
+
+
+@pytest_asyncio.fixture
+async def client(test_user: User):
     app.dependency_overrides[get_async_session] = override_get_async_session
+    app.dependency_overrides[get_current_user] = lambda: test_user
 
     transport = ASGITransport(app=app)
 
@@ -56,6 +70,7 @@ async def client():
 async def clean_database():
     async with test_session_factory() as session:
         _ = await session.execute(delete(Post))
+        _ = await session.execute(delete(User))
         await session.commit()
 
     yield

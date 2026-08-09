@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.dependencies import CurrentUserDep
 from app.db.session import get_async_session
 from app.models.post import Post
 from app.schemas.post import PostCreate, PostResponse, PostUpdate
@@ -26,8 +27,12 @@ SortOrder = Literal["newest", "oldest"]
 async def create_post(
     post_data: PostCreate,
     session: SessionDep,
+    current_user: CurrentUserDep,
 ) -> Post:
-    post = Post(**post_data.model_dump())
+    post = Post(
+        **post_data.model_dump(),
+        user_id=current_user.id,
+    )
 
     session.add(post)
     await session.commit()
