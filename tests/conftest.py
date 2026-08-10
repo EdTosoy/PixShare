@@ -1,6 +1,5 @@
 import os
 from collections.abc import AsyncGenerator
-from uuid import uuid4
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
@@ -28,7 +27,7 @@ test_engine = create_async_engine(
     poolclass=NullPool,
 )
 
-test_session_factory = async_sessionmaker(
+session_factory = async_sessionmaker(
     bind=test_engine,
     class_=AsyncSession,
     expire_on_commit=False,
@@ -36,14 +35,24 @@ test_session_factory = async_sessionmaker(
 
 
 async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with test_session_factory() as session:
+    async with session_factory() as session:
         yield session
 
 
 @pytest_asyncio.fixture
 async def test_user() -> User:
-    async with test_session_factory() as session:
+    async with session_factory() as session:
         user = User(clerk_id="test_clerk_user")
+        session.add(user)
+        await session.commit()
+        await session.refresh(user)
+        return user
+
+
+@pytest_asyncio.fixture
+async def other_user() -> User:
+    async with session_factory() as session:
+        user = User(clerk_id="other_test_clerk_user")
         session.add(user)
         await session.commit()
         await session.refresh(user)
@@ -68,7 +77,7 @@ async def client(test_user: User):
 
 @pytest_asyncio.fixture(autouse=True)
 async def clean_database():
-    async with test_session_factory() as session:
+    async with session_factory() as session:
         _ = await session.execute(delete(Post))
         _ = await session.execute(delete(User))
         await session.commit()

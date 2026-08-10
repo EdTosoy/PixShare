@@ -19,28 +19,6 @@ OffsetDep = Annotated[int, Query(ge=0)]
 SortOrder = Literal["newest", "oldest"]
 
 
-@router.post(
-    "",
-    response_model=PostResponse,
-    status_code=status.HTTP_201_CREATED,
-)
-async def create_post(
-    post_data: PostCreate,
-    session: SessionDep,
-    current_user: CurrentUserDep,
-) -> Post:
-    post = Post(
-        **post_data.model_dump(),
-        user_id=current_user.id,
-    )
-
-    session.add(post)
-    await session.commit()
-    await session.refresh(post)
-
-    return post
-
-
 @router.get(
     "",
     response_model=list[PostResponse],
@@ -88,27 +66,24 @@ async def get_post_by_id(
     return post
 
 
-@router.delete(
-    "/{post_id}",
+@router.post(
+    "",
     response_model=PostResponse,
+    status_code=status.HTTP_201_CREATED,
 )
-async def delete_post(
-    post_id: UUID,
+async def create_post(
+    post_data: PostCreate,
     session: SessionDep,
+    current_user: CurrentUserDep,
 ) -> Post:
-    result = await session.execute(
-        delete(Post).where(Post.id == post_id).returning(Post)
+    post = Post(
+        **post_data.model_dump(),
+        user_id=current_user.id,
     )
 
-    post = result.scalar_one_or_none()
-
-    if post is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Post not found",
-        )
-
+    session.add(post)
     await session.commit()
+    await session.refresh(post)
 
     return post
 
@@ -121,6 +96,7 @@ async def update_post(
     post_id: UUID,
     post_data: PostUpdate,
     session: SessionDep,
+    current_user: CurrentUserDep,
 ) -> Post:
     post = await session.get(Post, post_id)
 
@@ -130,6 +106,12 @@ async def update_post(
             detail="Post not found",
         )
 
+    if post.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to update this post",
+        )
+
     update_data: dict[str, object] = post_data.model_dump(exclude_unset=True)
 
     for field, value in update_data.items():
@@ -137,5 +119,32 @@ async def update_post(
 
     await session.commit()
     await session.refresh(post)
+
+    return post
+
+
+@router.delete(
+    "/{post_id}",
+    response_model=PostResponse,
+)
+async def delete_post(
+    post_id: UUID,
+    session: SessionDep,
+    current_user: CurrentUserDep,
+) -> Post:
+
+    post = await session.get(Post, post_id)
+
+    if post is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    if post.user_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to delete this post",
+        )
+
+    await session.delete(post)
+    await session.commit()
 
     return post
