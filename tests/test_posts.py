@@ -4,6 +4,10 @@ from uuid import UUID
 import pytest
 from httpx import AsyncClient
 
+from app.models.post import Post
+from app.models.user import User
+from tests.conftest import session_factory
+
 
 class PostData(TypedDict):
     id: str
@@ -194,6 +198,7 @@ async def test_update_post(client: AsyncClient):
     assert updated_post["url"] == post["url"]
     assert updated_post["file_name"] == post["file_name"]
     assert updated_post["file_type"] == post["file_type"]
+    assert updated_post["updated_at"] != post["updated_at"]
 
 
 @pytest.mark.asyncio
@@ -209,6 +214,33 @@ async def test_update_post_not_found(client: AsyncClient):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Post not found"
+
+
+@pytest.mark.asyncio
+async def test_update_post_not_authorized(
+    client: AsyncClient,
+    other_user: User,
+):
+    async with session_factory() as session:
+        post = Post(
+            user_id=other_user.id,
+            url="https://example.com/image.jpg",
+            file_name="image.jpg",
+            file_type="image/jpeg",
+        )
+        session.add(post)
+        await session.commit()
+        await session.refresh(post)
+
+    response = await client.patch(
+        f"/posts/{post.id}",
+        json={"caption": "Updated caption"},
+    )
+
+    assert response.status_code == 403
+    assert response.json()["detail"] == (
+        "You do not have permission to update this post"
+    )
 
 
 @pytest.mark.asyncio
@@ -236,3 +268,22 @@ async def test_delete_post_not_found(client: AsyncClient):
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Post not found"
+
+
+@pytest.mark.asyncio
+async def test_delete_post_not_authorized(client: AsyncClient, other_user: User):
+    async with session_factory() as session:
+        post = Post(
+            user_id=other_user.id,
+            url="https://example.com/image.jpg",
+            file_name="image.jpg",
+            file_type="image/jpeg",
+        )
+        session.add(post)
+        await session.commit()
+        await session.refresh(post)
+
+    response = await client.delete(f"/posts/{post.id}")
+
+    assert response.status_code == 403
+    assert response.json()["detail"] == "You do not have permission to delete this post"
