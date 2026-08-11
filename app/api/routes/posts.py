@@ -15,6 +15,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import CurrentUserDep
+from app.core.upload import validate_upload
 from app.db.session import get_async_session
 from app.models.post import Post
 from app.schemas.post import PostResponse, PostUpdate
@@ -88,6 +89,8 @@ async def create_post(
     file: UploadFile = File(...),
     caption: str | None = Form(None),
 ) -> Post:
+    await validate_upload(file)
+
     url = await storage.upload(
         file=file.file,
         filename=file.filename or "upload",
