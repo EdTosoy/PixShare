@@ -1,11 +1,13 @@
+from io import BytesIO
 from typing import TypedDict, cast
-from uuid import UUID
 
 import pytest
 from httpx import AsyncClient
+from PIL import Image
 
 from app.models.post import Post
 from app.models.user import User
+from app.storage.local import LocalStorage
 from tests.conftest import session_factory
 
 
@@ -19,31 +21,33 @@ class PostData(TypedDict):
     updated_at: str
 
 
+def create_test_image() -> bytes:
+    image = Image.new("RGB", (1, 1), "white")
+
+    buffer = BytesIO()
+    image.save(buffer, format="JPEG")
+
+    return buffer.getvalue()
+
+
 async def create_test_post(client: AsyncClient) -> PostData:
     response = await client.post(
         "/posts",
-        json={
+        data={
             "caption": "Test post",
-            "url": "https://example.com/image.jpg",
-            "file_name": "image.jpg",
-            "file_type": "image/jpeg",
+        },
+        files={
+            "file": (
+                "image.jpg",
+                create_test_image(),
+                "image/jpeg",
+            ),
         },
     )
 
     assert response.status_code == 201
 
     return cast(PostData, response.json())
-
-
-@pytest.mark.asyncio
-async def test_create_post(client: AsyncClient):
-    post = await create_test_post(client)
-
-    assert post["caption"] == "Test post"
-    assert post["url"] == "https://example.com/image.jpg"
-    assert post["file_name"] == "image.jpg"
-    assert post["file_type"] == "image/jpeg"
-    _ = UUID(post["id"])
 
 
 @pytest.mark.asyncio
@@ -179,6 +183,90 @@ async def test_get_post_by_id_not_found(client: AsyncClient):
 
 
 @pytest.mark.asyncio
+async def test_create_post(client: AsyncClient):
+    response = await client.post(
+        "/posts",
+        data={
+            "caption": "Test post",
+        },
+        files={
+            "file": (
+                "image.jpg",
+                create_test_image(),
+                "image/jpeg",
+            ),
+        },
+    )
+
+    assert response.status_code == 201
+
+    post = cast(PostData, response.json())
+
+    assert post["caption"] == "Test post"
+    assert post["file_name"] == "image.jpg"
+    assert post["file_type"] == "image/jpeg"
+
+
+@pytest.mark.asyncio
+async def test_create_post_rejects_unsupported_file_type(
+    client: AsyncClient,
+):
+    response = await client.post(
+        "/posts",
+        files={
+            "file": (
+                "test.txt",
+                b"not an image",
+                "text/plain",
+            ),
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Unsupported file type"
+
+
+@pytest.mark.asyncio
+async def test_create_post_rejects_oversized_file(
+    client: AsyncClient,
+):
+    oversized_file = b"x" * (10 * 1024 * 1024 + 1)
+
+    response = await client.post(
+        "/posts",
+        files={
+            "file": (
+                "large.jpg",
+                oversized_file,
+                "image/jpeg",
+            ),
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "File too large"
+
+
+@pytest.mark.asyncio
+async def test_create_post_rejects_invalid_image(
+    client: AsyncClient,
+):
+    response = await client.post(
+        "/posts",
+        files={
+            "file": (
+                "fake.jpg",
+                b"this is not actually a jpeg",
+                "image/jpeg",
+            ),
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Invalid image file"
+
+
+@pytest.mark.asyncio
 async def test_update_post(client: AsyncClient):
     post = await create_test_post(client)
 
@@ -287,3 +375,18 @@ async def test_delete_post_not_authorized(client: AsyncClient, other_user: User)
 
     assert response.status_code == 403
     assert response.json()["detail"] == "You do not have permission to delete this post"
+
+
+@pytest.mark.asyncio
+async def test_delete_post_removes_file(client: AsyncClient):
+    post = await create_test_post(client)
+
+    storage = LocalStorage()
+    file_path = storage.upload_dir / post["url"].split("/")[-1]
+
+    assert file_path.exists()
+
+    response = await client.delete(f"/posts/{post['id']}")
+
+    assert response.status_code == 200
+    assert not file_path.exists()
