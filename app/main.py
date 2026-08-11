@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from sqlalchemy.exc import DatabaseError
+from starlette.responses import JSONResponse
 
 from app.api.routes.posts import router as posts_router
 from app.core.config import get_settings
@@ -10,6 +12,18 @@ app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
 )
+
+
+@app.exception_handler(DatabaseError)
+async def database_error_handler(
+    request: Request,
+    exc: DatabaseError,
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"},
+    )
+
 
 app.include_router(posts_router)
 
