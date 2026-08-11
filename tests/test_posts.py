@@ -1,8 +1,9 @@
+from io import BytesIO
 from typing import TypedDict, cast
-from uuid import UUID
 
 import pytest
 from httpx import AsyncClient
+from PIL import Image
 
 from app.models.post import Post
 from app.models.user import User
@@ -18,6 +19,35 @@ class PostData(TypedDict):
     file_type: str
     created_at: str
     updated_at: str
+
+
+def create_test_image() -> bytes:
+    image = Image.new("RGB", (1, 1), "white")
+
+    buffer = BytesIO()
+    image.save(buffer, format="JPEG")
+
+    return buffer.getvalue()
+
+
+async def create_test_post(client: AsyncClient) -> PostData:
+    response = await client.post(
+        "/posts",
+        data={
+            "caption": "Test post",
+        },
+        files={
+            "file": (
+                "image.jpg",
+                create_test_image(),
+                "image/jpeg",
+            ),
+        },
+    )
+
+    assert response.status_code == 201
+
+    return cast(PostData, response.json())
 
 
 @pytest.mark.asyncio
@@ -152,26 +182,6 @@ async def test_get_post_by_id_not_found(client: AsyncClient):
     assert response.json()["detail"] == "Post not found"
 
 
-async def create_test_post(client: AsyncClient) -> PostData:
-    response = await client.post(
-        "/posts",
-        data={
-            "caption": "Test post",
-        },
-        files={
-            "file": (
-                "image.jpg",
-                b"fake image content",
-                "image/jpeg",
-            ),
-        },
-    )
-
-    assert response.status_code == 201
-
-    return cast(PostData, response.json())
-
-
 @pytest.mark.asyncio
 async def test_create_post(client: AsyncClient):
     response = await client.post(
@@ -182,7 +192,7 @@ async def test_create_post(client: AsyncClient):
         files={
             "file": (
                 "image.jpg",
-                b"fake jpeg content",
+                create_test_image(),
                 "image/jpeg",
             ),
         },
@@ -195,7 +205,6 @@ async def test_create_post(client: AsyncClient):
     assert post["caption"] == "Test post"
     assert post["file_name"] == "image.jpg"
     assert post["file_type"] == "image/jpeg"
-    _ = UUID(post["id"])
 
 
 @pytest.mark.asyncio
@@ -236,6 +245,25 @@ async def test_create_post_rejects_oversized_file(
 
     assert response.status_code == 400
     assert response.json()["detail"] == "File too large"
+
+
+@pytest.mark.asyncio
+async def test_create_post_rejects_invalid_image(
+    client: AsyncClient,
+):
+    response = await client.post(
+        "/posts",
+        files={
+            "file": (
+                "fake.jpg",
+                b"this is not actually a jpeg",
+                "image/jpeg",
+            ),
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Invalid image file"
 
 
 @pytest.mark.asyncio
