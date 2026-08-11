@@ -1,14 +1,24 @@
 from typing import Annotated, Literal
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy import delete, select
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    UploadFile,
+    status,
+)
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import CurrentUserDep
 from app.db.session import get_async_session
 from app.models.post import Post
-from app.schemas.post import PostCreate, PostResponse, PostUpdate
+from app.schemas.post import PostResponse, PostUpdate
+from app.storage.dependencies import StorageDep
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
@@ -72,13 +82,24 @@ async def get_post_by_id(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_post(
-    post_data: PostCreate,
     session: SessionDep,
     current_user: CurrentUserDep,
+    storage: StorageDep,
+    file: UploadFile = File(...),
+    caption: str | None = Form(None),
 ) -> Post:
+    url = await storage.upload(
+        file=file.file,
+        filename=file.filename or "upload",
+        content_type=file.content_type or "application/octet-stream",
+    )
+
     post = Post(
-        **post_data.model_dump(),
         user_id=current_user.id,
+        caption=caption,
+        url=url,
+        file_name=file.filename or "upload",
+        file_type=file.content_type or "application/octet-stream",
     )
 
     session.add(post)
@@ -131,8 +152,8 @@ async def delete_post(
     post_id: UUID,
     session: SessionDep,
     current_user: CurrentUserDep,
+    storage: StorageDep,
 ) -> Post:
-
     post = await session.get(Post, post_id)
 
     if post is None:
@@ -143,6 +164,8 @@ async def delete_post(
             status_code=403,
             detail="You do not have permission to delete this post",
         )
+
+    await storage.delete(post.url)
 
     await session.delete(post)
     await session.commit()

@@ -2,10 +2,12 @@ from typing import TypedDict, cast
 from uuid import UUID
 
 import pytest
+from fastapi import Path
 from httpx import AsyncClient
 
 from app.models.post import Post
 from app.models.user import User
+from app.storage.local import LocalStorage
 from tests.conftest import session_factory
 
 
@@ -22,11 +24,15 @@ class PostData(TypedDict):
 async def create_test_post(client: AsyncClient) -> PostData:
     response = await client.post(
         "/posts",
-        json={
+        data={
             "caption": "Test post",
-            "url": "https://example.com/image.jpg",
-            "file_name": "image.jpg",
-            "file_type": "image/jpeg",
+        },
+        files={
+            "file": (
+                "image.jpg",
+                b"fake image content",
+                "image/jpeg",
+            ),
         },
     )
 
@@ -40,9 +46,9 @@ async def test_create_post(client: AsyncClient):
     post = await create_test_post(client)
 
     assert post["caption"] == "Test post"
-    assert post["url"] == "https://example.com/image.jpg"
     assert post["file_name"] == "image.jpg"
     assert post["file_type"] == "image/jpeg"
+    assert post["url"].startswith("/uploads/")
     _ = UUID(post["id"])
 
 
@@ -287,3 +293,18 @@ async def test_delete_post_not_authorized(client: AsyncClient, other_user: User)
 
     assert response.status_code == 403
     assert response.json()["detail"] == "You do not have permission to delete this post"
+
+
+@pytest.mark.asyncio
+async def test_delete_post_removes_file(client: AsyncClient):
+    post = await create_test_post(client)
+
+    storage = LocalStorage()
+    file_path = storage.upload_dir / post["url"].split("/")[-1]
+
+    assert file_path.exists()
+
+    response = await client.delete(f"/posts/{post['id']}")
+
+    assert response.status_code == 200
+    assert not file_path.exists()
