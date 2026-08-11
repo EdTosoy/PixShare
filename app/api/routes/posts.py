@@ -18,7 +18,7 @@ from app.api.dependencies import CurrentUserDep
 from app.core.upload import validate_upload
 from app.db.session import get_async_session
 from app.models.post import Post
-from app.schemas.post import PostResponse, PostUpdate
+from app.schemas.post import PostResponse
 from app.storage.dependencies import StorageDep
 
 router = APIRouter(prefix="/posts", tags=["posts"])
@@ -118,9 +118,11 @@ async def create_post(
 )
 async def update_post(
     post_id: UUID,
-    post_data: PostUpdate,
     session: SessionDep,
     current_user: CurrentUserDep,
+    storage: StorageDep,
+    file: UploadFile | None = File(None),
+    caption: str | None = Form(None),
 ) -> Post:
     post = await session.get(Post, post_id)
 
@@ -136,13 +138,38 @@ async def update_post(
             detail="You do not have permission to update this post",
         )
 
-    update_data: dict[str, object] = post_data.model_dump(exclude_unset=True)
+    if caption is not None:
+        post.caption = caption
 
-    for field, value in update_data.items():
-        setattr(post, field, value)
+    old_url: str | None = None
+    new_url: str | None = None
 
-    await session.commit()
-    await session.refresh(post)
+    if file is not None:
+        await validate_upload(file)
+
+        old_url = post.url
+
+        new_url = await storage.upload(
+            file=file.file,
+            filename=file.filename or "upload",
+            content_type=file.content_type or "application/octet-stream",
+        )
+
+        post.url = new_url
+        post.file_name = file.filename or "upload"
+        post.file_type = file.content_type or "application/octet-stream"
+
+    try:
+        await session.commit()
+        await session.refresh(post)
+    except Exception:
+        if new_url is not None:
+            await storage.delete(new_url)
+
+        raise
+
+    if old_url is not None:
+        await storage.delete(old_url)
 
     return post
 

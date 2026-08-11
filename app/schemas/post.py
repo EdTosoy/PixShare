@@ -14,7 +14,3 @@ class PostResponse(BaseModel):
     file_type: str
     created_at: datetime
     updated_at: datetime
-
-
-class PostUpdate(BaseModel):
-    caption: str | None = None
