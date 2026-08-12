@@ -149,15 +149,17 @@ async def test_require_auth_rejects_unsigned_in_request():
         clerk_secret_key="test",
     )
 
-    with patch(
-        "app.api.routes.auth.authenticate_request",
-        return_value=state,
+    with (
+        patch(
+            "app.api.routes.auth.authenticate_request",
+            return_value=state,
+        ),
+        pytest.raises(HTTPException) as exc_info,
     ):
-        with pytest.raises(HTTPException) as exc_info:
-            _ = require_auth(
-                request=request,
-                settings=settings,
-            )
+        _ = require_auth(
+            request=request,
+            settings=settings,
+        )
 
     assert exc_info.value.status_code == 401
     assert exc_info.value.detail == "Unauthorized"
