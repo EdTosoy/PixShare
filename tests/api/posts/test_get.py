@@ -38,6 +38,25 @@ async def test_get_posts_with_pagination(client: AsyncClient):
 
 
 @pytest.mark.asyncio
+async def test_get_posts_pagination_is_deterministic(
+    client: AsyncClient,
+):
+    first = await create_test_post(client)
+    second = await create_test_post(client)
+    _third = await create_test_post(client)
+
+    response = await client.get("/posts?limit=2&offset=1")
+
+    assert response.status_code == 200
+
+    posts = cast(list[PostData], response.json())
+
+    assert len(posts) == 2
+    assert posts[0]["id"] == second["id"]
+    assert posts[1]["id"] == first["id"]
+
+
+@pytest.mark.asyncio
 async def test_get_posts_invalid_limit(client: AsyncClient):
     response = await client.get("/posts?limit=101")
 
