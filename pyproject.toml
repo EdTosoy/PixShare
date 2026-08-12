@@ -30,3 +30,4 @@ dev = [
 [tool.basedpyright]
 venvPath = "."
 venv = ".venv"
+reportImportCycles = false

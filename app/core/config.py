@@ -1,7 +1,7 @@
 from functools import lru_cache
 from typing import Annotated
 
-from pydantic import field_validator
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
@@ -14,7 +14,11 @@ class Settings(BaseSettings):
     clerk_publishable_key: str
     clerk_secret_key: str
     clerk_jwt_key: str | None = None
-    clerk_authorized_parties: Annotated[list[str], NoDecode] = []
+
+    clerk_authorized_parties: Annotated[
+        list[str],
+        NoDecode,
+    ] = Field(default_factory=list)
 
     @field_validator("clerk_authorized_parties", mode="before")
     @classmethod
@@ -24,7 +28,7 @@ class Settings(BaseSettings):
 
         return value
 
-    model_config = SettingsConfigDict(
+    model_config = SettingsConfigDict(  # pyright: ignore[reportUnannotatedClassAttribute]
         env_file=".env",
         case_sensitive=False,
         extra="ignore",
@@ -33,4 +37,4 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    return Settings()  # pyright: ignore[reportCallIssue]
