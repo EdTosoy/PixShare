@@ -23,8 +23,8 @@ app.mount(
 
 @app.exception_handler(DatabaseError)
 async def database_error_handler(
-    request: Request,
-    exc: DatabaseError,
+    request: Request,  # pyright: ignore[reportUnusedParameter]
+    exc: DatabaseError,  # pyright: ignore[reportUnusedParameter]
 ) -> JSONResponse:
     return JSONResponse(
         status_code=500,

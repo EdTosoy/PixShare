@@ -185,7 +185,7 @@ async def test_update_post_database_failure_does_not_delete_old_file(
 
     assert old_file.exists()
 
-    async def failing_commit(self: AsyncSession) -> None:
+    async def failing_commit(self: AsyncSession) -> None:  # pyright: ignore[reportUnusedParameter]
         raise DatabaseError(
             "UPDATE posts",
             {},
@@ -228,7 +228,7 @@ async def test_update_post_database_failure_cleans_up_new_file(
 
     existing_files = set(Path("uploads").glob("*.jpg"))
 
-    async def failing_commit(self: AsyncSession) -> None:
+    async def failing_commit(self: AsyncSession) -> None:  # pyright: ignore[reportUnusedParameter]
         raise DatabaseError(
             "UPDATE posts",
             {},
