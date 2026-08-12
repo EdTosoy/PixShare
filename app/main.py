@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import DatabaseError
@@ -9,6 +11,9 @@ from app.models import User  # noqa: F401  # pyright: ignore[reportUnusedImport]
 
 settings = get_settings()
 
+UPLOADS_DIR = Path("uploads")
+UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
@@ -16,15 +21,15 @@ app = FastAPI(
 
 app.mount(
     "/uploads",
-    StaticFiles(directory="uploads"),
+    StaticFiles(directory=UPLOADS_DIR),
     name="uploads",
 )
 
 
 @app.exception_handler(DatabaseError)
 async def database_error_handler(
-    request: Request,
-    exc: DatabaseError,
+    request: Request,  # pyright: ignore[reportUnusedParameter]
+    exc: DatabaseError,  # pyright: ignore[reportUnusedParameter]
 ) -> JSONResponse:
     return JSONResponse(
         status_code=500,
