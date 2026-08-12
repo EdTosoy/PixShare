@@ -1,7 +1,7 @@
 [project]
 name = "pix-share"
 version = "0.1.0"
-description = "Add your description here"
+description = "A FastAPI-based image sharing API"
 readme = "README.md"
 requires-python = ">=3.12"
 
@@ -21,7 +21,6 @@ dependencies = [
 dev = [
     "basedpyright>=1.39.9",
     "httpx>=0.28.1",
-    "httpx2>=2.9.1",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
     "ruff>=0.16.1",
@@ -31,3 +30,14 @@ dev = [
 venvPath = "."
 venv = ".venv"
 reportImportCycles = false
+reportCallInDefaultInitializer = false
+
+[tool.ruff]
+lint.flake8-bugbear.extend-immutable-calls = [
+    "fastapi.File",
+    "fastapi.Form",
+    "fastapi.Query",
+    "fastapi.Path",
+    "fastapi.Body",
+    "fastapi.Depends",
+]
