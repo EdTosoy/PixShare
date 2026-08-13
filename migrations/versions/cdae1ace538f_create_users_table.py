@@ -1,21 +1,18 @@
-"""feat: add users and post ownership
+"""create users table
 
-Revision ID: e64f0d4e0775
+Revision ID: cdae1ace538f
 Revises: 118d4c400b3d
-Create Date: 2026-08-10 05:43:05.066232
-
+Create Date: 2026-08-13 05:38:03.073220
 """
-
-from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "e64f0d4e0775"
-down_revision: str | None = "118d4c400b3d"
-branch_labels: str | Sequence[str] | None = None
-depends_on: str | Sequence[str] | None = None
+revision = "cdae1ace538f"
+down_revision = "118d4c400b3d"
+branch_labels = None
+depends_on = None
 
 
 def upgrade() -> None:

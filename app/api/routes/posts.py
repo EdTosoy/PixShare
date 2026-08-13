@@ -86,8 +86,8 @@ async def create_post(
     session: SessionDep,
     current_user: CurrentUserDep,
     storage: StorageDep,
-    file: UploadFile = File(...),
-    caption: str | None = Form(None),
+    file: Annotated[UploadFile, File()],
+    caption: Annotated[str | None, Form()] = None,
 ) -> Post:
     await validate_upload(file)
 
@@ -121,8 +121,8 @@ async def update_post(
     session: SessionDep,
     current_user: CurrentUserDep,
     storage: StorageDep,
-    file: UploadFile | None = File(None),
-    caption: str | None = Form(None),
+    file: Annotated[UploadFile | None, File()] = None,
+    caption: Annotated[str | None, Form()] = None,
 ) -> Post:
     post = await session.get(Post, post_id)
 
@@ -187,11 +187,14 @@ async def delete_post(
     post = await session.get(Post, post_id)
 
     if post is None:
-        raise HTTPException(status_code=404, detail="Post not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found",
+        )
 
     if post.user_id != current_user.id:
         raise HTTPException(
-            status_code=403,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to delete this post",
         )
 
