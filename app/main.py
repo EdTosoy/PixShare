@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import DatabaseError
 from starlette.responses import JSONResponse
@@ -18,7 +19,15 @@ app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
 )
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.mount(
     "/uploads",
     StaticFiles(directory=UPLOADS_DIR),
