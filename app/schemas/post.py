@@ -9,6 +9,7 @@ class PostResponse(BaseModel):
     model_config: ClassVar[ConfigDict] = ConfigDict(from_attributes=True)
 
     id: UUID
+    user_id: UUID
     caption: str | None
     url: str
     file_name: str
