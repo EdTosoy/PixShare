@@ -93,7 +93,7 @@ async def seed() -> None:
 
             # Copy the fixture into runtime storage if necessary.
             if not upload_path.exists():
-                shutil.copy2(source_path, upload_path)
+                _ = shutil.copy2(source_path, upload_path)
                 files_copied += 1
 
             # Check whether this demo post already exists.
@@ -121,12 +121,13 @@ async def seed() -> None:
 
         await session.commit()
 
-        print(
-            f"Seed complete: "
-            f"user={DEMO_CLERK_ID}, "
+        message = (
+            f"Seed complete: user={DEMO_CLERK_ID}, "
             f"files_copied={files_copied}, "
             f"posts_created={posts_created}"
         )
+
+        print(message)
 
 
 async def main() -> None:
