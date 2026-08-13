@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { Providers } from "./providers";
 import "./globals.css";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,12 +35,12 @@ export default function RootLayout({
         <Providers>
           <header className="border-b border-gray-200 bg-white dark:border-[#30363d] dark:bg-[#010409]">
             <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-              <a
+              <Link
                 href="/posts"
                 className="text-lg font-semibold tracking-tight hover:text-gray-600 dark:hover:text-gray-300"
               >
                 Pix-Share
-              </a>
+              </Link>
 
               <div className="flex items-center gap-3">
                 <Show when="signed-out">
