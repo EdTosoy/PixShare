@@ -9,14 +9,28 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { apiUrl } from "@/lib/api";
 import { getPost, updatePost } from "@/lib/posts";
+import { getCurrentUser } from "@/lib/users";
 
 export default function EditPostPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
 
   const { getToken } = useAuth();
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
 
+  const currentUserQuery = useQuery({
+    queryKey: ["current-user"],
+    queryFn: async () => {
+      const token = await getToken();
+
+      if (!token) {
+        throw new Error("You must be signed in.");
+      }
+
+      return getCurrentUser(token);
+    },
+    enabled: isLoaded && isSignedIn,
+  });
   const queryClient = useQueryClient();
 
   const [caption, setCaption] = useState<string | null>(null);
@@ -33,8 +47,6 @@ export default function EditPostPage() {
   });
 
   const post = postQuery.data;
-
-  const isOwner = Boolean(user && post && post.user_id === user.id);
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -138,12 +150,13 @@ export default function EditPostPage() {
     );
   }
 
-  // Authenticated user does not own this post.
+  const isOwner = currentUserQuery.data?.id === post.user_id;
+
   if (!isOwner) {
     return (
       <main className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
         <div className="rounded-md border border-gray-300 p-6 dark:border-[#30363d]">
-          <h1 className="font-semibold">You can't edit this post</h1>
+          <h1 className="font-semibold">You can&apos;t edit this post</h1>
 
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Only the owner of this post can make changes.
@@ -207,7 +220,7 @@ export default function EditPostPage() {
             id="caption"
             defaultValue={post.caption ?? ""}
             onChange={(event) => setCaption(event.target.value)}
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-[#30363d] dark:bg-[#0d1117]"
+            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/20 dark:border-[#30363d] dark:bg-[#0d1117]"
             rows={4}
             placeholder="Add a caption..."
           />

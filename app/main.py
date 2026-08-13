@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import DatabaseError
 from starlette.responses import JSONResponse
 
+from app.api.routes import users
 from app.api.routes.posts import router as posts_router
 from app.core.config import get_settings
 from app.models import User  # noqa: F401  # pyright: ignore[reportUnusedImport]
@@ -47,6 +48,7 @@ async def database_error_handler(
 
 
 app.include_router(posts_router)
+app.include_router(users.router)
 
 
 @app.get("/health")
