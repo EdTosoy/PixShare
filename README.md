@@ -1,11 +1,5 @@
 # PixShare
 
-[![CI](https://github.com/EdTosoy/PixShare/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/EdTosoy/PixShare/actions)
-[![Tests](https://github.com/EdTosoy/PixShare/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/EdTosoy/PixShare/actions)
-[![Coverage](https://img.shields.io/badge/coverage-unknown-lightgrey.svg)](#)
-[![Python](https://img.shields.io/badge/python-3.11-blue?logo=python)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
-
 PixShare is a production-minded media sharing demo: a FastAPI async backend that enforces safe uploads, file verification, and ownership rules, paired with a minimal Next.js frontend. It demonstrates secure multipart uploads, storage abstraction (local or object store), PostgreSQL persistence, Alembic migrations, and integration tests.
 
 ## Highlights
