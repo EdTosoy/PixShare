@@ -1,0 +1,77 @@
+{
+  "info": {
+    "name": "PixShare API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Minimal Postman collection for PixShare API (replace <TOKEN> and <HOST>)"
+  },
+  "item": [
+    {
+      "name": "List posts",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/posts",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["posts"]
+        }
+      }
+    },
+    {
+      "name": "Create post (multipart)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer <TOKEN>" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": ""
+            },
+            {
+              "key": "caption",
+              "value": "Demo upload",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8000/posts",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["posts"]
+        }
+      }
+    },
+    {
+      "name": "Replace post (PATCH)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Authorization", "value": "Bearer <TOKEN>" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "file", "type": "file", "src": "" },
+            { "key": "caption", "value": "Updated caption", "type": "text" }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8000/posts/{{post_id}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["posts", "{{post_id}}"]
+        }
+      }
+    }
+  ]
+}

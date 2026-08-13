@@ -1,14 +1,20 @@
 # PixShare
 
-PixShare is a full-stack media-sharing demo: a production-minded FastAPI backend that implements secure, async file uploads and media lifecycle patterns, paired with a minimal Next.js frontend. It demonstrates authenticated user ownership, multipart uploads, safe file validation and replacement, storage abstraction, and PostgreSQL persistence with migrations and tests.
+[![CI](https://github.com/EdTosoy/PixShare/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/EdTosoy/PixShare/actions)
+[![Tests](https://github.com/EdTosoy/PixShare/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/EdTosoy/PixShare/actions)
+[![Coverage](https://img.shields.io/badge/coverage-unknown-lightgrey.svg)](#)
+[![Python](https://img.shields.io/badge/python-3.11-blue?logo=python)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+
+PixShare is a production-minded media sharing demo: a FastAPI async backend that enforces safe uploads, file verification, and ownership rules, paired with a minimal Next.js frontend. It demonstrates secure multipart uploads, storage abstraction (local or object store), PostgreSQL persistence, Alembic migrations, and integration tests.
 
 ## Highlights
 
-- FastAPI async backend with REST endpoints for posts (upload/replace/delete)
-- Server-side image validation and verification (JPEG / PNG / WebP, max 10 MB)
-- Storage backend abstraction (local or remote object store)
+- FastAPI async backend with endpoints for post creation, retrieval, replacement, and deletion
+- Server-side image validation and verification using Pillow (JPEG / PNG / WebP; max 10 MB)
+- Storage backend abstraction (local filesystem or S3-compatible object storage)
 - PostgreSQL persistence with Alembic migrations
-- Minimal Next.js frontend in `web/` demonstrating upload and browsing
+- Minimal TypeScript Next.js frontend in `web/` demonstrating the API
 - Integration tests and CI-ready configuration
 
 ## Key features
@@ -25,7 +31,7 @@ The repository includes a Docker Compose configuration for local development and
 From the repository root:
 
 ```bash
-# Build and start all services (API, DB, etc.)
+# Build and start all services (API, DB, frontend)
 docker compose up --build
 ```
 
@@ -56,27 +62,29 @@ See `app/core/config.py` for the exact set of configuration variables. Typical v
 - STORAGE_BACKEND / S3_* variables — credentials and bucket if using S3-compatible storage
 - SECRET_KEY / AUTH related variables — if the auth implementation requires them
 
+A sample `.env.example` is included in the repository.
+
 ## API (selected endpoints)
 
 Base URL: http://localhost:8000
 
 - GET /posts
   - Query params: limit, offset, file_type, sort (newest|oldest)
-  - Returns: paginated list of posts
+  - Returns a paginated list of posts
 
 - GET /posts/{post_id}
-  - Returns: single post (UUID)
+  - Returns a single post by UUID
 
 - POST /posts
-  - Authenticated. Form multipart: `file` (image), `caption` (optional)
-  - Validates image type & size, uploads to configured storage, persists Post record
+  - Authenticated. Form multipart: file (image), caption (optional)
+  - Validates image (JPEG/PNG/WEBP), uploads to storage, persists Post
 
 - PATCH /posts/{post_id}
-  - Authenticated + owner-only. Accepts new `file` (optional) and `caption`
-  - Uploads new file, updates DB, deletes old file after successful commit; if commit fails, the new file is removed
+  - Authenticated and owner-only. Accepts new file (optional) and caption
+  - Safely replaces files: uploads new file first and deletes old file after DB commit; if DB commit fails, new upload is deleted
 
 - DELETE /posts/{post_id}
-  - Authenticated + owner-only. Deletes storage object and DB record
+  - Authenticated and owner-only. Deletes storage object and DB record
 
 ## Upload validation
 
@@ -84,19 +92,11 @@ Upload validation and verification are implemented in `app/core/upload.py` and e
 
 - Allowed MIME types: `image/jpeg`, `image/png`, `image/webp`
 - Max file size: 10 MB
-- The server verifies the actual image format via Pillow (not just content-type)
+- The server verifies the actual image format via Pillow (not just declared content type)
 
-## Frontend
+## Storage
 
-The `web/` directory contains a Next.js app built with TypeScript. To run it locally:
-
-```bash
-cd web
-npm install
-npm run dev
-```
-
-The frontend demonstrates listing posts and an upload UI that consumes the API.
+Storage is abstracted under `app/storage/`. Default dev config uses local filesystem (`UPLOADS_DIR`) and the app mounts it at `/uploads` (see `app/main.py`). To use S3 or another object store, configure `STORAGE_BACKEND` and related S3 vars.
 
 ## Database & Migrations
 
