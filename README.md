@@ -211,7 +211,3 @@ Contributions, issues, and documentation fixes are welcome. Please open an issue
 ## License
 
 This repository is licensed under the MIT License — see the bundled `LICENSE` file for details.
-
-```
-
-```
