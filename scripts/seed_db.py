@@ -7,32 +7,39 @@ Usage:
   python scripts/seed_db.py
 """
 
-import os
 import asyncio
-import uuid
-from datetime import datetime
+import os
 
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import (
+    async_sessionmaker,
+    create_async_engine,
+)
 
-# Import your models (ensure PYTHONPATH includes repo root or run via `python -m scripts.seed_db`)
-from app.models.user import User
 from app.models.post import Post
+from app.models.user import User
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
+
 if not DATABASE_URL:
     raise RuntimeError("Set DATABASE_URL (e.g. postgresql+asyncpg://user:pass@host/db)")
 
+
 engine = create_async_engine(DATABASE_URL, echo=False)
-AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+
+AsyncSessionLocal = async_sessionmaker(
+    engine,
+    expire_on_commit=False,
+)
 
 
-async def seed():
+async def seed() -> None:
     async with AsyncSessionLocal() as session:
         # Create a demo user
         demo_clerk_id = "demo_user_1"
+
         user = User(clerk_id=demo_clerk_id)
         session.add(user)
+
         await session.commit()
         await session.refresh(user)
 
@@ -58,17 +65,19 @@ async def seed():
             },
         ]
 
-        for p in sample_posts:
+        for sample_post in sample_posts:
             post = Post(
                 user_id=user.id,
-                caption=p["caption"],
-                url=p["url"],
-                file_name=p["file_name"],
-                file_type=p["file_type"],
+                caption=sample_post["caption"],
+                url=sample_post["url"],
+                file_name=sample_post["file_name"],
+                file_type=sample_post["file_type"],
             )
+
             session.add(post)
 
         await session.commit()
+
         print(f"Seeded demo user {user.clerk_id} and {len(sample_posts)} posts.")
 
 
