@@ -15,6 +15,8 @@ RUN uv sync --locked --no-dev
 
 COPY app ./app
 COPY migrations ./migrations
+COPY scripts ./scripts
+COPY demo ./demo
 COPY alembic.ini ./
 
 RUN mkdir -p /app/uploads
