@@ -114,3 +114,12 @@ export async function deletePost(id: string, token: string): Promise<Post> {
     },
   });
 }
+
+export async function getMyPosts(
+  token: string,
+  params: GetPostsParams = {},
+): Promise<Post[]> {
+  return apiFetch<Post[]>(`/users/me/posts${toQueryString(params)}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}

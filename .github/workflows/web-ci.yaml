@@ -7,7 +7,12 @@ on:
   pull_request:
     paths:
       - "web/**"
-      - ".github/workflows/web-ci.yml"
+      - ".github/workflows/web-ci.yaml"
+      - "app/**"
+      - "migrations/**"
+      - "scripts/**"
+      - "uv.lock"
+      - "pyproject.toml"
 
 concurrency:
   group: web-ci-${{ github.workflow }}-${{ github.ref }}
@@ -19,8 +24,28 @@ defaults:
 
 jobs:
   web:
-    name: Lint, typecheck, and build
+    name: Lint, typecheck, build, and browser tests
     runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/pix_share_e2e
+      UPLOADS_DIR: /tmp/pixshare-e2e-uploads
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_TELEMETRY_DISABLED: "1"
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: pix_share_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d pix_share_e2e"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
 
     steps:
       - name: Checkout
@@ -50,3 +75,25 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Prepare real test API and database
+        working-directory: .
+        run: |
+          uv sync --locked --no-dev
+          uv run --no-sync alembic upgrade head
+          uv run --no-sync python -m scripts.seed_db
+          uv run --no-sync uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/pixshare-api.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:8000/health; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Public browser journeys against PostgreSQL
+        run: pnpm test:e2e

@@ -1,74 +1,94 @@
 # Architecture
 
-This document describes the high-level architecture and runtime flow of PixShare.
+PixShare is a modular monolith: one FastAPI API, one Next.js application,
+PostgreSQL, and a replaceable storage interface. No queues, microservices,
+additional databases, or paid infrastructure are required.
 
-## Overview
+## Request paths
 
-PixShare is a small full-stack media-sharing application composed of:
+```text
+Browser → Next.js App Router → typed browser API client → FastAPI
+  Clerk session → Bearer token → Clerk SDK verification → local User
+  TanStack Query cache                             ↓
+  responsive UI states                 SQLAlchemy async → PostgreSQL
+                                                   ↓
+                                           Storage interface
+                                                   ↓
+                                        LocalStorage → /uploads
+```
 
-- A FastAPI asynchronous backend (app/) that exposes a REST API for creating, retrieving, updating, and deleting media posts.
-- A Next.js frontend (web/) that demonstrates listing posts and performing authenticated uploads.
-- A storage abstraction layer allowing uploads to be stored either on the local filesystem (dev) or an S3-compatible object store (prod).
-- PostgreSQL as the primary persistence store, with Alembic for schema migrations.
+Public reads (`GET /posts`, `GET /posts/{id}`) never require Clerk.
+Authenticated operations resolve a verified Clerk identity to a local User.
+Concurrent first requests tolerate the unique `clerk_id` insert race.
+`GET /users/me/posts` filters by that user's database ID; the caller cannot
+supply an arbitrary owner. PATCH/DELETE enforce ownership inside the API and
+lock the post row, so concurrent replacement/delete requests serialize.
 
-The application focuses on secure file upload patterns: validating file types and contents, enforcing per-user ownership, and ensuring safe replacement and cleanup of media objects.
+Post arrays keep their existing fields and add nullable `image` metadata. Lists use `(created_at, id)` ordering
+and offset pagination. Existing migrations are unchanged; this implementation
+needs no schema/data migration.
 
-## Components
+## Media lifecycle
 
-- API (FastAPI)
-  - Entrypoint: `app/main.py` mounts the FastAPI app, serves static uploads at `/uploads`, and wires dependencies.
-  - Routes: `app/api/routes/posts.py` (post CRUD + safe file lifecycle), `app/api/routes/auth.py` (authentication endpoints).
-  - Dependencies: `app/api/dependencies.py` exposes DI for current user, db session, and storage backend.
+1. FastAPI parses multipart input; Pillow validates bounded bytes and dimensions
+   off the event loop (10 MiB, 16 MP, 20,000px per side).
+2. Storage writes a unique original and attempts an atomic WebP variant bundle.
+   A complete manifest publishes dimensions and available variants together.
+   Optional encoding failure removes partial derivatives and retains the original.
+   The original URL remains the database reference.
+3. The database references the new URL and commits.
+4. On commit failure: roll back, then clean the new original and every variant.
+5. On replacement success: clean the old original/bundle, then refresh the response.
+6. On deletion: commit removal of the row before cleaning the original/bundle.
 
-- Storage
-  - Abstraction: `app/storage/` defines an interface for upload, delete, and other operations.
-  - Local backend: stores files under `UPLOADS_DIR` and serves them as static files for development.
-  - S3 backend: a production-ready option that uploads objects to an S3-compatible bucket and returns object URLs.
+A refresh failure after commit must never cause deletion of the committed image.
+Storage-cleanup failures are logged without paths/credentials and do not turn a
+successful database mutation into a failed response. PostgreSQL cannot transact
+with the filesystem. Crashes and failures may leave orphans; see PRODUCTION.md.
 
-- Persistence
-  - SQLAlchemy (async) models under `app/models/` (User, Post).
-  - `app/db/` contains session setup and Base model wiring.
-  - Alembic for migrations (migrations/ and alembic.ini).
+LocalStorage generates canonical image extensions, copies bytes outside the
+event loop, removes partial writes on failure, and deletes only its `/uploads/`
+namespace. WebP bundles live at `_variants/{original-filename}/`, use bounded
+320/640/1280/1920px maximum edges, preserve aspect ratio/transparency and normalize
+orientation. Original bytes and metadata are never rewritten. Pillow validation
+and generation share one process-local worker lock to limit simultaneous raster
+allocations. No queue, cloud processor, or new backend dependency is required.
+`Storage.describe()` returns optional metadata; reads never trigger generation.
+Malformed/missing bundles and legacy records fall back to the original. The
+explicit row-locked `scripts.backfill_variants` command optimizes compatible old
+uploads without changing database rows. See [image/API details](IMAGE_DELIVERY.md).
+`UPLOADS_DIR` is shared by the storage dependency, static mount,
+and seed script. No S3 implementation exists yet; the old architecture doc's
+claim that one existed was incorrect. The interface is ready for the adapter
+specified in PRODUCTION.md.
 
-- Frontend
-  - `web/` holds a Next.js app that consumes the API. It's intentionally minimal to keep focus on backend patterns.
+## Frontend boundaries
 
-## Runtime flow (create post)
+- `web/app`: route composition; async server params per installed Next 16 docs.
+- `web/components`: navigation, gallery, auth states and reusable post controls.
+- `web/lib`: typed API access, post contracts and error normalization.
+- `web/app/providers.tsx`: real Clerk context and TanStack Query ownership.
+- `web/proxy.ts`: Clerk request integration when configured; public otherwise.
 
-1. Client issues POST /posts with a multipart form: file + caption.
-2. FastAPI route receives `UploadFile` and first calls `app/core/upload.validate_upload` to check content type, size, and verify image using Pillow.
-3. The storage dependency's `upload` method is called to persist the bytes (local or S3). It returns a public URL.
-4. A new Post record is created and added to the DB session, then the session is committed and refreshed.
-5. On success, the new Post is returned. On failure after upload but before commit, the code removes the new object to avoid orphaned files.
+The query cache is recreated when Clerk identity changes. Public queries never
+request a token; private keys include the user identity. Mutations invalidate
+post queries. AuthGate supplies the UI sign-in state; backend checks are the
+security boundary. Owner editing waits for ownership resolution rather than
+briefly denying access while that query loads.
 
-## Runtime flow (replace post file)
+Images remain browser-direct and laid out at explicit aspect ratios or bounded
+detail heights. A shared `PostImage` component provides actual-width WebP srcsets
+and responsive `sizes` inside `picture`; Next Image retains the original fallback.
+Missing derivatives fall back to the original in the browser as well. Gallery
+images are lazy, while details and the existing-image editor preview are eager.
+Immutable versioned derivative URLs receive long-lived cache headers; original
+URLs retain their existing behavior. No private-IP optimizer exception or
+server-side remote image proxy is enabled. Typography uses installed system fonts so builds work
+without a Google Fonts connection.
 
-1. Client issues PATCH /posts/{id} with a new file.
-2. Server validates new file and uploads it (new_url).
-3. The Post object is updated with new_url and DB commit is attempted.
-4. If commit succeeds, old file is deleted from storage. If commit fails, the new file is deleted and the DB remains unchanged.
-
-## Security considerations
-
-- Files are validated by MIME type against an allowed list and verified with Pillow to prevent spoofing.
-- File size is bounded by MAX_FILE_SIZE (10 MB) to avoid large uploads.
-- Ownership checks ensure only the creator can update/delete their posts.
-- Storage keys/URLs should be unguessable in production or served via signed URLs; local dev uses a simple static mount.
-
-## Observability and metrics (suggested)
-
-- Expose a `/health` endpoint for readiness/liveness checks.
-- Add basic request/response metrics (Prometheus) and error logging (Sentry).
-
-## Deployment notes
-
-- Use environment variables for configuration (DATABASE_URL, S3 credentials, SECRET_KEY).
-- Migrate DB on deploy (alembic upgrade head).
-- Use a CDN in front of object storage for production performance.
-
-## Files to inspect
-- `app/main.py` — app wiring and static mounts
-- `app/api/routes/posts.py` — upload/create/replace/delete flows
-- `app/core/upload.py` — validation logic
-- `app/storage/` — storage backends
-- `migrations/` + `alembic.ini` — migration config
+Caption-based image descriptions and card link names are normalized and bounded
+to 160 characters, with neutral fallbacks instead of filenames. Redundant card
+image alt text is empty because the enclosing link supplies the description.
+Full captions and original filenames remain available on the detail page.
+Automated axe scans complement actual keyboard/focus/error-state tests; they
+do not establish complete accessibility conformance.

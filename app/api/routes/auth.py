@@ -18,6 +18,15 @@ def require_auth(
         Depends(http_bearer),
     ] = None,
 ) -> RequestState:
+    if not settings.clerk_secret_key and not settings.clerk_jwt_key:
+        raise HTTPException(
+            status_code=401 if _credentials is None else 503,
+            detail="Unauthorized"
+            if _credentials is None
+            else "Authentication is not configured",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     state = authenticate_request(
         request,
         AuthenticateRequestOptions(
@@ -31,7 +40,7 @@ def require_auth(
     if not state.is_signed_in:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=state.reason.name if state.reason else "Unauthorized",
+            detail="Unauthorized",
             headers={"WWW-Authenticate": "Bearer"},
         )
 

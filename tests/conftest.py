@@ -4,6 +4,7 @@ from collections.abc import AsyncGenerator
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import delete
+from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -21,6 +22,12 @@ TEST_DATABASE_URL = os.environ.get(
     "TEST_DATABASE_URL",
     "postgresql+asyncpg://postgres:postgres@localhost:5432/pix_share_test",
 )
+
+# The autouse fixture deletes all rows. Refuse an application database by mistake.
+if not (make_url(TEST_DATABASE_URL).database or "").endswith("_test"):
+    raise RuntimeError(
+        "TEST_DATABASE_URL must point to a disposable database ending in _test"
+    )
 
 test_engine = create_async_engine(
     TEST_DATABASE_URL,

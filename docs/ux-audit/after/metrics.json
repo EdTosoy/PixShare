@@ -1,0 +1,1146 @@
+[
+  {
+    "name": "desktop-light-home",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "desktop-light-explore",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "desktop-light-detail",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "desktop-light-upload",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "desktop-light-gallery",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "desktop-light-edit",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "desktop-dark-home",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "desktop-dark-explore",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "desktop-dark-detail",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "desktop-dark-upload",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "desktop-dark-gallery",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "desktop-dark-edit",
+    "width": 1440,
+    "scrollWidth": 1440,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-light-home",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-light-explore",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-light-detail",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-light-upload",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-light-gallery",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-light-edit",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-dark-home",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-dark-explore",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-dark-detail",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-dark-upload",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-dark-gallery",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "tablet-dark-edit",
+    "width": 768,
+    "scrollWidth": 768,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-home",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-explore",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-detail",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-upload",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-gallery",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-edit",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-long-caption",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-expanded-caption",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-delete-dialog",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-delete-error",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": "rgb(165, 54, 54)",
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-upload-error",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": "rgb(165, 54, 54)",
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-filter-empty",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-loading",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-light-gallery-error",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#faf9f6",
+      "surface": "#fff",
+      "soft": "#eeefe9",
+      "foreground": "#252b27",
+      "muted": "#626d64",
+      "accent": "#35664e",
+      "error": "#a53636"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-home",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-explore",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-detail",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-upload",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-gallery",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-edit",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-long-caption",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-expanded-caption",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-delete-dialog",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-delete-error",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": "rgb(255, 169, 161)",
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-upload-error",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": "rgb(255, 169, 161)",
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-filter-empty",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-loading",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  },
+  {
+    "name": "mobile-dark-gallery-error",
+    "width": 390,
+    "scrollWidth": 390,
+    "horizontalOverflow": false,
+    "h1Count": 1,
+    "themeTarget": {
+      "width": 44,
+      "height": 44
+    },
+    "errorColor": null,
+    "colors": {
+      "background": "#161b18",
+      "surface": "#202621",
+      "soft": "#242e26",
+      "foreground": "#e9ede6",
+      "muted": "#a7b2a7",
+      "accent": "#b6d4af",
+      "error": "#ffa9a1"
+    },
+    "overflowElements": []
+  }
+]

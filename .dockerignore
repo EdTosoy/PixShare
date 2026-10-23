@@ -9,3 +9,9 @@ __pycache__
 *.pyc
 .env
 uploads/*
+
+web/
+.agents/
+.codex/
+.aws/
+.env*

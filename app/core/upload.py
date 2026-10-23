@@ -1,7 +1,11 @@
+import asyncio
+import warnings
 from io import BytesIO
 
 from fastapi import HTTPException, UploadFile, status
 from PIL import Image, UnidentifiedImageError
+
+from app.core.images import IMAGE_WORK_LOCK, ImageDimensionsError, check_dimensions
 
 ALLOWED_IMAGE_TYPES = {
     "image/jpeg": "JPEG",
@@ -10,6 +14,20 @@ ALLOWED_IMAGE_TYPES = {
 }
 
 MAX_FILE_SIZE = 10 * 1024 * 1024
+
+
+def validate_image(content: bytes, expected_format: str) -> None:
+    # Decode off the event loop, one image at a time per API process.
+    with IMAGE_WORK_LOCK, warnings.catch_warnings():
+        warnings.simplefilter("error", Image.DecompressionBombWarning)
+        with Image.open(BytesIO(content)) as image:
+            check_dimensions(image)
+            if image.format != expected_format:
+                raise ValueError("Image format does not match its MIME type")
+            image.verify()
+        with Image.open(BytesIO(content)) as image:
+            check_dimensions(image)
+            _ = image.load()
 
 
 async def validate_upload(file: UploadFile) -> None:
@@ -21,7 +39,7 @@ async def validate_upload(file: UploadFile) -> None:
             detail="Unsupported file type",
         )
 
-    content = await file.read()
+    content = await file.read(MAX_FILE_SIZE + 1)
 
     if len(content) > MAX_FILE_SIZE:
         raise HTTPException(
@@ -30,21 +48,19 @@ async def validate_upload(file: UploadFile) -> None:
         )
 
     try:
-        image = Image.open(BytesIO(content))
-        image.verify()
-
-        image = Image.open(BytesIO(content))
-        _ = image.load()
-
-    except (UnidentifiedImageError, OSError):
+        await asyncio.to_thread(validate_image, content, ALLOWED_IMAGE_TYPES[content_type])
+    except ImageDimensionsError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid image file",
+            detail="Image dimensions are too large. Use at most 16 megapixels and 20,000 pixels per side.",
         )
-
-    expected_format = ALLOWED_IMAGE_TYPES[content_type]
-
-    if image.format != expected_format:
+    except (
+        UnidentifiedImageError,
+        OSError,
+        ValueError,
+        Image.DecompressionBombError,
+        Image.DecompressionBombWarning,
+    ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid image file",

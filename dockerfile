@@ -19,8 +19,12 @@ COPY scripts ./scripts
 COPY demo ./demo
 COPY alembic.ini ./
 
-RUN mkdir -p /app/uploads
+RUN useradd --create-home --uid 10001 appuser \
+    && mkdir -p /app/uploads \
+    && chown appuser:appuser /app/uploads
+
+USER appuser
 
 EXPOSE 8000
 
-CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "--no-sync", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

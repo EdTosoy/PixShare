@@ -6,6 +6,7 @@ from httpx import AsyncClient
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.main import UPLOADS_DIR
 from app.models.post import Post
 from app.models.user import User
 from tests.conftest import session_factory
@@ -112,7 +113,7 @@ async def test_update_post_replaces_file_and_deletes_old_file(
 
     old_url = post["url"]
     old_filename = Path(old_url).name
-    old_file = Path("uploads") / old_filename
+    old_file = UPLOADS_DIR / old_filename
 
     assert old_file.exists()
 
@@ -144,7 +145,7 @@ async def test_update_post_rejects_invalid_replacement_and_preserves_old_file(
 
     old_url = post["url"]
     old_filename = Path(old_url).name
-    old_file = Path("uploads") / old_filename
+    old_file = UPLOADS_DIR / old_filename
 
     assert old_file.exists()
 
@@ -181,7 +182,7 @@ async def test_update_post_database_failure_does_not_delete_old_file(
 
     old_url = post["url"]
     old_filename = Path(old_url).name
-    old_file = Path("uploads") / old_filename
+    old_file = UPLOADS_DIR / old_filename
 
     assert old_file.exists()
 
@@ -222,11 +223,11 @@ async def test_update_post_database_failure_cleans_up_new_file(
 
     old_url = post["url"]
     old_filename = Path(old_url).name
-    old_file = Path("uploads") / old_filename
+    old_file = UPLOADS_DIR / old_filename
 
     assert old_file.exists()
 
-    existing_files = set(Path("uploads").glob("*.jpg"))
+    existing_files = set(UPLOADS_DIR.glob("*.jpg"))
 
     async def failing_commit(self: AsyncSession) -> None:  # pyright: ignore[reportUnusedParameter]
         raise DatabaseError(
@@ -254,7 +255,7 @@ async def test_update_post_database_failure_cleans_up_new_file(
 
     assert response.status_code == 500
 
-    current_files = set(Path("uploads").glob("*.jpg"))
+    current_files = set(UPLOADS_DIR.glob("*.jpg"))
     new_files = current_files - existing_files
 
     assert old_file.exists()

@@ -1,0 +1,526 @@
+{
+  "performance": [
+    {
+      "viewport": 1440,
+      "page": "explore",
+      "images": [
+        {
+          "path": "/uploads/_variants/sample_art.webp/v1-640.webp",
+          "width": 400,
+          "height": 454,
+          "lazy": "lazy"
+        },
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "width": 400,
+          "height": 400,
+          "lazy": "lazy"
+        },
+        {
+          "path": "/uploads/sample_city.png",
+          "width": 7254,
+          "height": 4841,
+          "lazy": "lazy"
+        }
+      ],
+      "responses": [
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "status": 200,
+          "bytes": 22738
+        },
+        {
+          "path": "/uploads/_variants/sample_art.webp/v1-640.webp",
+          "status": 200,
+          "bytes": 56406
+        },
+        {
+          "path": "/uploads/sample_city.png",
+          "status": 200,
+          "bytes": 3785028
+        }
+      ],
+      "resources": [
+        {
+          "path": "/uploads/_variants/sample_art.webp/v1-640.webp",
+          "durationMs": 7
+        },
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "durationMs": 6
+        },
+        {
+          "path": "/uploads/sample_city.png",
+          "durationMs": 17
+        }
+      ],
+      "coldOriginals": [
+        {
+          "path": "/uploads/sample_city.png",
+          "status": 200,
+          "bytes": 3785028
+        },
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "status": 200,
+          "bytes": 4451028
+        },
+        {
+          "path": "/uploads/sample_art.webp",
+          "status": 200,
+          "bytes": 3985909
+        }
+      ],
+      "coldSelected": [
+        {
+          "path": "/uploads/_variants/sample_art.webp/v1-640.webp",
+          "status": 200,
+          "bytes": 56406
+        },
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "status": 200,
+          "bytes": 22738
+        },
+        {
+          "path": "/uploads/sample_city.png",
+          "status": 200,
+          "bytes": 3785028
+        }
+      ]
+    },
+    {
+      "viewport": 1440,
+      "page": "detail",
+      "images": [
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-1280.webp",
+          "width": 1056,
+          "height": 1056,
+          "lazy": "eager"
+        }
+      ],
+      "responses": [
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-1280.webp",
+          "status": 200,
+          "bytes": 166844
+        }
+      ],
+      "resources": [
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-1280.webp",
+          "durationMs": 2
+        }
+      ],
+      "coldOriginals": [
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "status": 200,
+          "bytes": 4451028
+        }
+      ],
+      "coldSelected": [
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-1280.webp",
+          "status": 200,
+          "bytes": 166844
+        }
+      ]
+    },
+    {
+      "viewport": 390,
+      "page": "explore",
+      "images": [
+        {
+          "path": "/uploads/_variants/sample_art.webp/v1-640.webp",
+          "width": 350,
+          "height": 397,
+          "lazy": "lazy"
+        },
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "width": 350,
+          "height": 350,
+          "lazy": "lazy"
+        },
+        {
+          "path": "/uploads/sample_city.png",
+          "width": 7254,
+          "height": 4841,
+          "lazy": "lazy"
+        }
+      ],
+      "responses": [
+        {
+          "path": "/uploads/sample_city.png",
+          "status": 200,
+          "bytes": 3785028
+        },
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "status": 200,
+          "bytes": 22738
+        },
+        {
+          "path": "/uploads/_variants/sample_art.webp/v1-640.webp",
+          "status": 200,
+          "bytes": 56406
+        }
+      ],
+      "resources": [
+        {
+          "path": "/uploads/_variants/sample_art.webp/v1-640.webp",
+          "durationMs": 7
+        },
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "durationMs": 7
+        },
+        {
+          "path": "/uploads/sample_city.png",
+          "durationMs": 16
+        }
+      ],
+      "coldOriginals": [
+        {
+          "path": "/uploads/sample_city.png",
+          "status": 200,
+          "bytes": 3785028
+        },
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "status": 200,
+          "bytes": 4451028
+        },
+        {
+          "path": "/uploads/sample_art.webp",
+          "status": 200,
+          "bytes": 3985909
+        }
+      ],
+      "coldSelected": [
+        {
+          "path": "/uploads/_variants/sample_art.webp/v1-640.webp",
+          "status": 200,
+          "bytes": 56406
+        },
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "status": 200,
+          "bytes": 22738
+        },
+        {
+          "path": "/uploads/sample_city.png",
+          "status": 200,
+          "bytes": 3785028
+        }
+      ]
+    },
+    {
+      "viewport": 390,
+      "page": "detail",
+      "images": [
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "width": 350,
+          "height": 350,
+          "lazy": "eager"
+        }
+      ],
+      "responses": [
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "status": 200,
+          "bytes": 22738
+        }
+      ],
+      "resources": [
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "durationMs": 1
+        }
+      ],
+      "coldOriginals": [
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "status": 200,
+          "bytes": 4451028
+        }
+      ],
+      "coldSelected": [
+        {
+          "path": "/uploads/_variants/sample_sunset.jpg/v1-640.webp",
+          "status": 200,
+          "bytes": 22738
+        }
+      ]
+    }
+  ],
+  "accessibility": [
+    {
+      "name": "light-public-home",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 39
+    },
+    {
+      "name": "light-public-explore",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "light-public-detail",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "light-public-protected",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 36
+    },
+    {
+      "name": "light-public-sign-in",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 7
+        }
+      ],
+      "passes": 40
+    },
+    {
+      "name": "light-public-sign-up",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 7
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "light-owner-upload",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 3
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "light-owner-gallery-empty",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "light-owner-detail-success",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "light-owner-delete-dialog",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 18
+    },
+    {
+      "name": "light-owner-edit",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "light-owner-form-error",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "dark-public-home",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 39
+    },
+    {
+      "name": "dark-public-explore",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "dark-public-detail",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "dark-public-protected",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 36
+    },
+    {
+      "name": "dark-public-sign-in",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 6
+        }
+      ],
+      "passes": 40
+    },
+    {
+      "name": "dark-public-sign-up",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 6
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "dark-owner-upload",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "dark-owner-gallery-empty",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "dark-owner-detail-success",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "dark-owner-delete-dialog",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 18
+    },
+    {
+      "name": "dark-owner-edit",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "dark-owner-form-error",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 42
+    }
+  ]
+}

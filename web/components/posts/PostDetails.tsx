@@ -1,35 +1,34 @@
 import type { Post } from "@/lib/types";
-
-type PostDetailsProps = {
-  post: Post;
-};
-
-export function PostDetails({ post }: PostDetailsProps) {
+export function PostDetails({ post }: { post: Post }) {
+  const hasLongCaption = Boolean(post.caption && post.caption.length > 200);
   return (
-    <section className="mt-6 border-t border-gray-200 pt-6 dark:border-[#30363d]">
-      <h1 className="text-xl font-semibold">
-        {post.caption || post.file_name}
-      </h1>
-
-      <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
+    <section className="post-details">
+      <span className="eyebrow">A SHARED PERSPECTIVE</span>
+      <h1>{hasLongCaption ? "The story behind this image" : post.caption?.trim() || "Untitled image"}</h1>
+      {hasLongCaption && (
+        <details className="post-caption">
+          <summary>Read full caption</summary>
+          <p>{post.caption}</p>
+        </details>
+      )}
+      <dl>
         <div>
-          <dt className="text-gray-500 dark:text-gray-400">File name</dt>
-          <dd className="mt-1 break-all">{post.file_name}</dd>
+          <dt>Format</dt>
+          <dd>{post.file_type.replace("image/", "").toUpperCase()}</dd>
         </div>
-
         <div>
-          <dt className="text-gray-500 dark:text-gray-400">File type</dt>
-          <dd className="mt-1">{post.file_type}</dd>
+          <dt>Shared</dt>
+          <dd>
+            {new Date(post.created_at).toLocaleDateString("en", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </dd>
         </div>
-
         <div>
-          <dt className="text-gray-500 dark:text-gray-400">Created</dt>
-          <dd className="mt-1">{new Date(post.created_at).toLocaleString()}</dd>
-        </div>
-
-        <div>
-          <dt className="text-gray-500 dark:text-gray-400">Updated</dt>
-          <dd className="mt-1">{new Date(post.updated_at).toLocaleString()}</dd>
+          <dt>Original file</dt>
+          <dd className="file-name">{post.file_name}</dd>
         </div>
       </dl>
     </section>

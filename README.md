@@ -1,213 +1,222 @@
 # PixShare
 
-PixShare is a production-minded media sharing demo: a FastAPI async backend that enforces safe uploads, file verification, and ownership rules, paired with a minimal Next.js frontend. It demonstrates secure multipart uploads, storage abstraction (local filesystem or object storage), PostgreSQL persistence, Alembic migrations, and integration tests.
+A photography-focused image-sharing MVP built on FastAPI, PostgreSQL,
+SQLAlchemy/Alembic, and Next.js 16.3 with Clerk, TanStack Query, and Tailwind 4.
+Existing migrations and API response contracts are preserved.
 
-## Highlights
+## Run the whole application
 
-- FastAPI async backend with endpoints for post creation, retrieval, replacement, and deletion
-- Server-side image validation and verification using Pillow (JPEG / PNG / WebP; max 10 MB)
-- Storage backend abstraction (local filesystem or S3-compatible object storage)
-- PostgreSQL persistence with Alembic migrations
-- Minimal TypeScript Next.js frontend in `web/` demonstrating the API
-- Integration tests and CI-ready configuration
-
-## Key features
-
-- Authentication and per-user ownership checks for create/update/delete operations
-- Multipart file uploads handled safely with content verification (Pillow)
-- Safe image replacement: upload new object first, commit DB, then remove old object; roll back and cleanup on failure
-- Static upload serving mounted at `/uploads` (see `app/main.py`)
-- Pagination, filtering, and sorting for post listing endpoints
-- Idempotent demo database seeding with sample images
-
-## Quickstart (recommended: Docker Compose)
-
-The repository includes a Docker Compose configuration for local development and integration testing.
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/EdTosoy/PixShare.git
-cd PixShare
-```
-
-### 2. Configure environment variables
-
-Copy the example environment file:
+Prerequisites: Docker Engine and Docker Compose.
 
 ```bash
 cp .env.example .env
+# Edit .env with your Clerk development-instance keys (see below).
+docker compose up --build
+# Optional: add the three bundled sample images.
+docker compose exec api uv run --no-sync python -m scripts.seed_db
 ```
 
-Set the required Clerk values in `.env`.
+Open **http://localhost:3000**. API docs: http://localhost:8000/docs.
+Compose starts PostgreSQL, applies Alembic migrations, starts the API, then the
+frontend. Database and uploads use persistent named volumes. Services bind to
+loopback for local use. Do not delete volumes to update the app.
 
-### 3. Start the application
+Public browsing works with empty Clerk keys; sharing requires authentication.
+Configure these values from the **same Clerk instance**:
 
-Build and start the services:
+- `CLERK_SECRET_KEY`: backend verification and Next.js Clerk proxy; server-only.
+- `CLERK_PUBLISHABLE_KEY`: retained backend setting / optional browser-test alias;
+  backend session verification uses the secret key or optional JWT public key.
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`: frontend publishable key.
+- `CLERK_AUTHORIZED_PARTIES=http://localhost:3000`: accepted token origins.
+- Optional `CLERK_JWT_KEY`: PEM public verification key; leave blank to use JWKS.
+
+Enable the sign-in methods you want in your Clerk development dashboard.
+`/sign-in` uses Clerk's real UI and links to `/sign-up` for account creation. A Clerk account is
+mapped to a local User on its first authenticated API request. A seeded demo
+user cannot be used to sign in. No development authentication bypass exists.
+
+`NEXT_PUBLIC_*` values are compiled into the frontend; rebuild after changing
+keys or the API origin. Never put secret keys in a `NEXT_PUBLIC_*` variable.
+Use `localhost` consistently: switching to `127.0.0.1` changes the allowed origin.
+
+## Local development without application containers
+
+Prerequisites: Python 3.12+, uv, Node 24+, pnpm 11.11.0, and PostgreSQL 17.
+Use the checked-in lockfiles.
 
 ```bash
-docker compose up --build
+cp .env.example .env
+cp web/.env.example web/.env.local
+# Configure matching Clerk keys in both files; web also needs CLERK_SECRET_KEY.
+docker compose up -d postgres
+uv sync --locked
+uv run alembic upgrade head
+uv run python -m scripts.seed_db  # optional; works locally and in containers
+uv run uvicorn app.main:app --reload --port 8000
 ```
-
-The application will be available at:
-
-- API: [http://localhost:8000](http://localhost:8000)
-- Frontend: [http://localhost:3000](http://localhost:3000)
-- API health check: [http://localhost:8000/health](http://localhost:8000/health)
-
-### 4. Run database migrations
 
 In another terminal:
 
 ```bash
-docker compose exec api uv run alembic upgrade head
+cd web
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-### 5. Seed demo data
+For production-mode local frontend verification: `pnpm build && pnpm start`.
+The start script copies static assets into Next's standalone output and runs its
+server. No Google Fonts fetch is needed to build.
 
-The repository includes three sample images under `demo/`. Seed them with:
+## Application routes
 
-```bash
-docker compose exec api uv run python -m scripts.seed_db
-```
+| Route | Behavior |
+| --- | --- |
+| `/` | Landing page with the six latest public images |
+| `/explore` | Public gallery; format filter, newest/oldest sort, 12-image pages |
+| `/posts/[id]` | Public image detail; owner controls when signed in |
+| `/upload` | Authenticated drag/drop or file-picker upload, preview and caption |
+| `/me` | Authenticated personal gallery with the same filters and pagination |
+| `/posts/[id]/edit` | Owner-only caption editing, clearing, and image replacement |
+| `/sign-in` | Clerk authentication, or configuration guidance when keys are absent |
+| `/sign-up` | Clerk registration and required account onboarding |
 
-The seed script creates the demo user, copies the sample images into the application's upload storage, and creates the corresponding database records. It is safe to run multiple times.
+Legacy `/posts` and `/posts/new` redirect to `/explore` and `/upload`.
+Light/dark themes follow the system until explicitly changed. Forms have visible
+focus states; the native confirmation dialog traps focus, supports Escape, and
+returns focus to its trigger. Reduced-motion preferences disable animation.
+Images use responsive API-generated WebP variants inside `picture` with
+`next/image` original fallbacks. Gallery images load lazily; details load eagerly.
+Originals remain available at their existing URLs. See [image delivery and API
+metadata](docs/IMAGE_DELIVERY.md) for limits, cleanup, and optional legacy backfill.
 
-### 6. Open the frontend
+## API
 
-Visit:
+| Endpoint | Access / contract |
+| --- | --- |
+| `GET /posts` | Public array of posts |
+| `GET /posts/{id}` | Public post or 404 |
+| `POST /posts` | Bearer-authenticated multipart `file`, optional `caption`; 201 |
+| `PATCH /posts/{id}` | Owner-only multipart `file` and/or `caption`; 200 |
+| `DELETE /posts/{id}` | Owner-only; returns deleted post; 200 |
+| `GET /users/me` | Bearer-authenticated local user ID |
+| `GET /users/me/posts` | Bearer-authenticated user's posts only |
+| `GET /health` | Process liveness; does not test database readiness |
 
-[http://localhost:3000](http://localhost:3000)
+Both list endpoints accept `limit` (1–100, default 20), `offset` (default 0),
+`file_type` (MIME string), and `sort` (`newest` or `oldest`). Ordering uses
+`created_at` and UUID as a stable tie-breaker. Offset pages can shift when other
+users add/delete posts. Existing list responses remain arrays.
 
-## Run the API locally (no Docker)
+Uploads accept **JPEG, PNG, WebP, at most 10 MiB, 16 megapixels, and 20,000 pixels
+per side** (MiB is shown as “MB” in the UI).
+The server verifies MIME/format agreement and decodes the image with Pillow;
+corrupt images and decompression bombs are rejected before unbounded decoding.
+Validation and resizing run off the API event loop with a shared per-process
+decode budget. Captions allow 5000
+characters. Omitting `caption` preserves it on PATCH; sending `caption=""`
+clears it. Post responses add nullable `image` metadata (dimensions and WebP
+variants); `url` still points to the original. Legacy records require no migration.
+Unknown formats, bad images, and oversized files/dimensions return 400;
+authentication/ownership failures return 401/403; invalid request values return
+422. The UI presents these errors and refreshes affected queries after writes.
 
-1. Create and activate a Python virtual environment.
-2. Install dependencies using the project's package manager.
-3. Ensure PostgreSQL is available.
-4. Set the required environment variables.
-5. Apply migrations and run the server.
-
-Using `uv`:
-
-```bash
-uv sync
-uv run alembic upgrade head
-uv run uvicorn app.main:app --reload --port 8000
-```
-
-## Environment variables
-
-See `app/core/config.py` for the exact configuration used by the API.
-
-A sample `.env.example` is included in the repository.
-
-The main variables are:
-
-- `DATABASE_URL` — PostgreSQL connection string
-- `CLERK_PUBLISHABLE_KEY` — Clerk publishable key
-- `CLERK_SECRET_KEY` — Clerk secret key
-- `CLERK_JWT_KEY` — Clerk JWT verification key, when configured
-- `CLERK_AUTHORIZED_PARTIES` — comma-separated authorized frontend origins
-
-The Next.js frontend has its own environment configuration under `web/.env.example`.
-
-## API (selected endpoints)
-
-Base URL: [http://localhost:8000](http://localhost:8000)
-
-- `GET /posts`
-  - Query params: `limit`, `offset`, `file_type`, `sort` (`newest` | `oldest`)
-  - Returns a paginated list of posts
-
-- `GET /posts/{post_id}`
-  - Returns a single post by UUID
-
-- `POST /posts`
-  - Authenticated. Form multipart: `file` (image), `caption` (optional)
-  - Validates image (JPEG/PNG/WEBP), uploads to storage, persists Post
-
-- `PATCH /posts/{post_id}`
-  - Authenticated and owner-only. Accepts a new file (optional) and caption
-  - Safely replaces files: uploads the new object first and deletes the old object after DB commit; if the DB commit fails, the new upload is deleted
-
-- `DELETE /posts/{post_id}`
-  - Authenticated and owner-only. Deletes the storage object and database record
-
-## Upload validation
-
-Upload validation and verification are implemented in `app/core/upload.py` and enforce:
-
-- Allowed MIME types: `image/jpeg`, `image/png`, `image/webp`
-- Maximum file size: 10 MB
-- The server verifies the actual image format via Pillow, not just the declared content type
-
-## Storage
-
-Storage is abstracted under `app/storage/`.
-
-The default development configuration uses local filesystem storage. Uploaded files are stored under `uploads/` and served at `/uploads`.
-
-The storage layer is designed so that it can be replaced with an object store such as S3 without changing the post routes.
-
-## Database & Migrations
-
-Alembic is configured for database migrations. Migration scripts are located in `migrations/`, with configuration in `alembic.ini`.
-
-Apply migrations with:
-
-```bash
-docker compose exec api uv run alembic upgrade head
-```
-
-## Demo data
-
-Sample images are included under:
-
-```text
-demo/
-├── sample_art.webp
-├── sample_city.png
-└── sample_sunset.jpg
-```
-
-Seed the database and copy the demo images into upload storage with:
-
-```bash
-docker compose exec api uv run python -m scripts.seed_db
-```
-
-The seed operation is idempotent and can safely be run again without creating duplicate users or posts.
+Files use unique names and canonical extensions. Failed database commits clean
+new uploads; replacement and deletion remove old media only after commit.
+Concurrent owner writes are serialized with PostgreSQL row locks. If physical
+cleanup fails after commit, the API logs a sanitized reconciliation warning and
+keeps the successful database operation. See the operational limitations below.
 
 ## Tests
 
-Integration tests are present under `tests/`.
-
-Run the test suite locally with:
-
-```bash
-uv run pytest
-```
-
-Or inside the API container:
+Backend tests delete all rows in their database. Use a **disposable** database
+whose name ends in `_test`, never the application database.
 
 ```bash
-docker compose exec api uv run pytest
+docker compose up -d postgres
+docker compose exec postgres createdb -U postgres pix_share_test
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/pix_share_test uv run alembic upgrade head
+TEST_DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/pix_share_test uv run pytest -q
+uv run ruff check .
+uv run basedpyright
+cd web
+pnpm lint
+pnpm typecheck
+pnpm build
 ```
 
-## Development notes
+For Playwright, start the API against a **separate disposable E2E database**:
 
-- The storage layer is abstracted under `app/storage/` so you can switch between local filesystem storage and an object store.
-- Upload validation lives in `app/core/upload.py`.
-- Post routes and safe replacement logic are in `app/api/routes/posts.py`.
-- Authentication and current-user handling are implemented under `app/api/`.
-- Database models are located under `app/models/`.
-- Database migrations are managed with Alembic.
-- The Next.js frontend is located under `web/`.
+```bash
+# From the repository root, using the local PostgreSQL service above:
+docker compose exec postgres createdb -U postgres pix_share_e2e
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/pix_share_e2e uv run alembic upgrade head
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/pix_share_e2e UPLOADS_DIR=/tmp/pixshare-e2e-uploads uv run python -m scripts.seed_db
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/pix_share_e2e UPLOADS_DIR=/tmp/pixshare-e2e-uploads uv run uvicorn app.main:app --port 8000
+```
 
-## Contributing
+In another terminal, run `cd web && pnpm exec playwright install chromium`, then
+`pnpm test:e2e`. The suite starts the built frontend on port 3000. Stop an
+existing development server first, or set `E2E_BASE_URL` to an already-running
+test frontend. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select system Chromium;
+Chromium's sandbox stays enabled. Screenshots/traces stay in ignored
+`web/test-results/`. Public tests use real API/PostgreSQL data on desktop,
+tablet, and mobile.
 
-Contributions, issues, and documentation fixes are welcome. Please open an issue or pull request; for larger changes, open an issue first to discuss the plan.
+The suite also runs axe-core and keyboard checks in both themes and verifies
+responsive variant selection and original fallback. To enable the additional
+Firefox/WebKit public and authenticated projects, install their matching engines
+and run on a supported host with their system libraries:
 
-## License
+```bash
+pnpm exec playwright install firefox webkit
+E2E_REQUIRE_AUTH=1 E2E_CROSS_BROWSER=1 pnpm test:e2e
+```
 
-This repository is licensed under the MIT License — see the bundled `LICENSE` file for details.
+See [Phase 8 results](docs/PHASE_8_REPORT.md) for actual browser availability,
+accessibility scope, performance measurements, and remaining risks.
+
+For hosted Clerk verification, follow the exact [Phase 6 setup and verification
+record](docs/AUTH_VERIFICATION.md). Playwright loads ignored `web/.env.local`
+and `web/.env.e2e.local`; it needs matching development keys and two distinct
+dedicated `+clerk_test` accounts. The form tests use email-code authentication;
+the CRUD test uses official Clerk helpers and genuine sessions verified by the
+API. The sign-up test creates and cleans up only its own randomly named Clerk
+development user. Persistent test accounts are preserved.
+
+```bash
+cd web
+pnpm build  # rebuild after configuring the frontend publishable key
+E2E_REQUIRE_AUTH=1 pnpm test:e2e --project=auth
+pnpm test:e2e
+```
+
+Without credentials the default suite explicitly skips Clerk setup and five
+authenticated journeys. `E2E_REQUIRE_AUTH=1` fails immediately instead. Never
+use production credentials or an application database for these tests.
+
+See [verification results and changed-file inventory](docs/IMPLEMENTATION.md)
+for this implementation's executed checks and unverified journeys.
+
+## Deployment considerations
+
+This is a production-minded MVP, not a deployed/operated service. See
+[architecture](docs/ARCHITECTURE.md) and [production-readiness review](docs/PRODUCTION.md).
+
+- Keep PostgreSQL and Alembic. Back up data and uploads; run migrations once
+  before application rollout. Compose auto-migration is a local convenience.
+- Configure explicit CORS and Clerk authorized origins, HTTPS, and secrets via
+  the deployment environment. Defaults and Compose database credentials are local.
+- Local media requires persistent shared storage for multiple API replicas.
+  Storage stays behind `app/storage/base.py`; S3-compatible storage has been
+  investigated and is documented, but no adapter or cloud resources are installed.
+- Filesystem/object-store writes cannot be atomic with PostgreSQL. A crash after
+  upload or a failed cleanup can leave orphan files; reconciliation is currently
+  manual. A committed write followed by a refresh failure can return 500 even
+  though the write succeeded. No idempotency/retry token is implemented.
+- Configure request-body limits, rate limits, and monitoring at ingress before
+  public deployment. Review image metadata/privacy, moderation, and abuse handling
+  for the intended audience.
+
+No deployments, paid infrastructure, commits, pushes, or pull requests are part
+of this implementation.

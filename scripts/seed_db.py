@@ -12,20 +12,19 @@ The script:
 """
 
 import asyncio
-import os
 import shutil
 from pathlib import Path
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+from app.core.config import get_settings
 from app.models.post import Post
 from app.models.user import User
+from app.storage.local import LocalStorage
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
-
-if not DATABASE_URL:
-    raise RuntimeError("Set DATABASE_URL (e.g. postgresql+asyncpg://user:pass@host/db)")
+settings = get_settings()
+DATABASE_URL = settings.database_url
 
 engine = create_async_engine(DATABASE_URL, echo=False)
 
@@ -36,8 +35,8 @@ AsyncSessionLocal = async_sessionmaker(
 
 DEMO_CLERK_ID = "demo_user_1"
 
-DEMO_DIR = Path("/app/demo")
-UPLOADS_DIR = Path("/app/uploads")
+DEMO_DIR = Path(__file__).resolve().parents[1] / "demo"
+UPLOADS_DIR = Path(settings.uploads_dir)
 
 SAMPLE_POSTS = [
     {
@@ -60,6 +59,7 @@ SAMPLE_POSTS = [
 
 async def seed() -> None:
     UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    storage = LocalStorage(str(UPLOADS_DIR))
 
     async with AsyncSessionLocal() as session:
         # Get or create the demo user.
@@ -95,6 +95,8 @@ async def seed() -> None:
             if not upload_path.exists():
                 _ = shutil.copy2(source_path, upload_path)
                 files_copied += 1
+
+            _ = await storage.ensure_variants(post_url)
 
             # Check whether this demo post already exists.
             result = await session.execute(

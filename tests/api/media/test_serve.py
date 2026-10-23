@@ -1,8 +1,7 @@
-from pathlib import Path
-
 import pytest
 from httpx import AsyncClient
 
+from app.main import UPLOADS_DIR
 from tests.helpers.posts import create_test_image
 
 
@@ -10,7 +9,7 @@ from tests.helpers.posts import create_test_image
 async def test_serve_uploaded_file(
     client: AsyncClient,
 ):
-    upload_dir = Path("uploads")
+    upload_dir = UPLOADS_DIR
     upload_dir.mkdir(exist_ok=True)
 
     filename = "test-image.jpg"
@@ -38,7 +37,7 @@ async def test_serve_uploaded_file_returns_404_when_not_found(
 async def test_serve_uploaded_file_returns_content_type(
     client: AsyncClient,
 ):
-    upload_dir = Path("uploads")
+    upload_dir = UPLOADS_DIR
     upload_dir.mkdir(exist_ok=True)
 
     filename = "content-type-test.jpg"

@@ -82,3 +82,18 @@ async def test_delete_nonexistent_file_does_not_fail(tmp_path: Path):
     storage = LocalStorage(upload_dir=str(tmp_path))
 
     await storage.delete("/uploads/does-not-exist.txt")
+
+
+@pytest.mark.asyncio
+async def test_storage_canonical_extension_and_scoped_deletion(tmp_path: Path):
+    storage = LocalStorage(upload_dir=str(tmp_path))
+    url = await storage.upload(BytesIO(b"image"), "untrusted.html", "image/jpeg")
+    assert url.endswith(".jpg")
+    saved = tmp_path / Path(url).name
+    await storage.delete(f"https://foreign.example{url}")
+    assert saved.exists()
+    await storage.delete(f"/uploads/../{saved.name}")
+    assert saved.exists()
+    await storage.delete(url)
+    await storage.delete(url)
+    assert not saved.exists()

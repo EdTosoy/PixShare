@@ -1,100 +1,86 @@
-import { useEffect } from "react";
+"use client";
+import { useEffect, useRef } from "react";
 
-type DeletePostDialogProps = {
+type Props = {
   open: boolean;
   isPending: boolean;
   error: Error | null;
   onClose: () => void;
   onConfirm: () => void;
 };
-
 export function DeletePostDialog({
   open,
   isPending,
   error,
   onClose,
   onConfirm,
-}: DeletePostDialogProps) {
+}: Props) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const cancel = useRef<HTMLButtonElement>(null);
+  const confirm = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !isPending) {
-        onClose();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-
+    const dialog = ref.current;
+    if (!dialog || !open) return;
+    const trigger = document.activeElement as HTMLElement | null;
+    dialog.showModal();
+    cancel.current?.focus();
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      dialog.close();
+      trigger?.focus();
     };
-  }, [open, isPending, onClose]);
-
-  if (!open) {
-    return null;
-  }
-
+  }, [open]);
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      role="presentation"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget && !isPending) {
-          onClose();
+    <dialog
+      ref={ref}
+      className="delete-dialog"
+      aria-labelledby="delete-title"
+      aria-describedby="delete-description"
+      onKeyDown={(event) => {
+        if (event.key !== "Tab" || isPending) return;
+        // Native modality makes the page inert, but reverse Tab can still move
+        // into browser chrome. Keep keyboard cycling within the two actions.
+        if (event.shiftKey && document.activeElement === cancel.current) {
+          event.preventDefault();
+          confirm.current?.focus();
+        } else if (!event.shiftKey && document.activeElement === confirm.current) {
+          event.preventDefault();
+          cancel.current?.focus();
         }
       }}
+      onCancel={(event) => {
+        event.preventDefault();
+        if (!isPending) onClose();
+      }}
     >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="delete-post-title"
-        aria-describedby="delete-post-description"
-        className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-xl dark:border-[#30363d] dark:bg-[#161b22]"
-      >
-        <h2
-          id="delete-post-title"
-          className="text-lg font-semibold text-gray-900 dark:text-white"
-        >
-          Delete post?
-        </h2>
-
-        <p
-          id="delete-post-description"
-          className="mt-2 text-sm text-gray-600 dark:text-gray-400"
-        >
-          This action cannot be undone. The post and its uploaded file will be
-          permanently deleted.
+      <span className="eyebrow">YOUR GALLERY</span>
+      <h2 id="delete-title">Delete this image?</h2>
+      <p id="delete-description">
+        This permanently removes your post and its image. This action cannot be
+        undone.
+      </p>
+      {error && (
+        <p role="alert" className="error-banner">
+          {error.message}
         </p>
-
-        {error && (
-          <div className="mt-4 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900 dark:bg-[#2d1117] dark:text-red-300">
-            {error.message}
-          </div>
-        )}
-
-        <div className="mt-6 flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isPending}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-[#30363d] dark:text-gray-300 dark:hover:bg-[#21262d]"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isPending}
-            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
-          >
-            {isPending ? "Deleting..." : "Delete post"}
-          </button>
-        </div>
+      )}
+      <div className="form-actions">
+        <button
+          ref={cancel}
+          className="button secondary"
+          onClick={onClose}
+          disabled={isPending}
+        >
+          Keep image
+        </button>
+        <button
+          ref={confirm}
+          className="button danger"
+          onClick={onConfirm}
+          disabled={isPending}
+        >
+          {isPending ? "Deleting…" : "Delete post"}
+        </button>
       </div>
-    </div>
+    </dialog>
   );
 }

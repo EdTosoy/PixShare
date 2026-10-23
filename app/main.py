@@ -2,7 +2,6 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from sqlalchemy.exc import DatabaseError
 from starlette.responses import JSONResponse
 
@@ -10,10 +9,11 @@ from app.api.routes import users
 from app.api.routes.posts import router as posts_router
 from app.core.config import get_settings
 from app.models import User  # noqa: F401  # pyright: ignore[reportUnusedImport]
+from app.storage.media import MediaFiles
 
 settings = get_settings()
 
-UPLOADS_DIR = Path("uploads")
+UPLOADS_DIR = Path(settings.uploads_dir)
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(
@@ -22,16 +22,14 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-    ],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 app.mount(
     "/uploads",
-    StaticFiles(directory=UPLOADS_DIR),
+    MediaFiles(directory=UPLOADS_DIR),
     name="uploads",
 )
 

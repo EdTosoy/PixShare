@@ -7,6 +7,11 @@ export type Post = {
   file_type: string;
   created_at: string;
   updated_at: string;
+  image?: {
+    width: number;
+    height: number;
+    variants: { url: string; width: number; height: number }[];
+  } | null;
 };
 
 export type CreatePostInput = {

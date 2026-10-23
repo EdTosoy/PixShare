@@ -4,6 +4,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
+from app.schemas.media import ImageInfo
+
 
 class PostResponse(BaseModel):
     model_config: ClassVar[ConfigDict] = ConfigDict(from_attributes=True)
@@ -16,3 +18,4 @@ class PostResponse(BaseModel):
     file_type: str
     created_at: datetime
     updated_at: datetime
+    image: ImageInfo | None = None

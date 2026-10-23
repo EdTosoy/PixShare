@@ -11,8 +11,13 @@ class Settings(BaseSettings):
     environment: str = "development"
     database_url: str
 
-    clerk_publishable_key: str
-    clerk_secret_key: str
+    uploads_dir: str = "uploads"
+    cors_origins: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: ["http://localhost:3000"]
+    )
+
+    clerk_publishable_key: str = ""
+    clerk_secret_key: str = ""
     clerk_jwt_key: str | None = None
 
     clerk_authorized_parties: Annotated[
@@ -20,7 +25,12 @@ class Settings(BaseSettings):
         NoDecode,
     ] = Field(default_factory=list)
 
-    @field_validator("clerk_authorized_parties", mode="before")
+    @field_validator("clerk_jwt_key", mode="before")
+    @classmethod
+    def blank_jwt_key(cls, value: str | None) -> str | None:
+        return value if value and value.strip() else None
+
+    @field_validator("clerk_authorized_parties", "cors_origins", mode="before")
     @classmethod
     def split_csv(cls, value: str | list[str]) -> list[str]:
         if isinstance(value, str):

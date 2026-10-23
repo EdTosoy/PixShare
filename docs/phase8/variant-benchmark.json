@@ -1,0 +1,60 @@
+[
+  {
+    "fixture": "sample_sunset.jpg",
+    "source_width": 3172,
+    "source_height": 3172,
+    "original_bytes": 4451028,
+    "peak_process_rss_kib": 167744,
+    "variants": [
+      {
+        "width": 320,
+        "height": 320,
+        "bytes": 10954
+      },
+      {
+        "width": 640,
+        "height": 640,
+        "bytes": 22738
+      },
+      {
+        "width": 1280,
+        "height": 1280,
+        "bytes": 166844
+      },
+      {
+        "width": 1920,
+        "height": 1920,
+        "bytes": 811018
+      }
+    ]
+  },
+  {
+    "fixture": "sample_art.webp",
+    "source_width": 3544,
+    "source_height": 4028,
+    "original_bytes": 3985909,
+    "peak_process_rss_kib": 206020,
+    "variants": [
+      {
+        "width": 282,
+        "height": 320,
+        "bytes": 20842
+      },
+      {
+        "width": 563,
+        "height": 640,
+        "bytes": 56406
+      },
+      {
+        "width": 1126,
+        "height": 1280,
+        "bytes": 188216
+      },
+      {
+        "width": 1689,
+        "height": 1920,
+        "bytes": 546430
+      }
+    ]
+  }
+]

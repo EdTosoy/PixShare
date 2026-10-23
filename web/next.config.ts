@@ -1,17 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: "http",
-        hostname: "localhost",
-        port: "8000",
-        pathname: "/uploads/**",
-      },
-    ],
-    dangerouslyAllowLocalIP: true,
-  },
+  output: "standalone",
+  // Media is fetched by the browser, including when web runs in Docker.
+  // API-generated WebP srcsets live in <picture>; original URLs remain fallbacks.
+  images: { unoptimized: true },
 };
 
 export default nextConfig;

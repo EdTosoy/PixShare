@@ -3,6 +3,7 @@ from typing import cast
 import pytest
 from httpx import AsyncClient
 
+from app.main import UPLOADS_DIR
 from app.models.post import Post
 from app.models.user import User
 from app.storage.local import LocalStorage
@@ -60,7 +61,7 @@ async def test_delete_post_not_authorized(client: AsyncClient, other_user: User)
 async def test_delete_post_removes_file(client: AsyncClient):
     post = await create_test_post(client)
 
-    storage = LocalStorage()
+    storage = LocalStorage(upload_dir=str(UPLOADS_DIR))
     file_path = storage.upload_dir / post["url"].split("/")[-1]
 
     assert file_path.exists()

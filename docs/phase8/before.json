@@ -1,0 +1,542 @@
+{
+  "performance": [
+    {
+      "viewport": 1440,
+      "page": "explore",
+      "images": [
+        {
+          "path": "/uploads/sample_art.webp",
+          "width": 3544,
+          "height": 4028,
+          "lazy": "lazy"
+        },
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "width": 3172,
+          "height": 3172,
+          "lazy": "lazy"
+        },
+        {
+          "path": "/uploads/sample_city.png",
+          "width": 7254,
+          "height": 4841,
+          "lazy": "lazy"
+        }
+      ],
+      "responses": [
+        {
+          "path": "/uploads/sample_city.png",
+          "status": 200,
+          "bytes": 3785028
+        },
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "status": 200,
+          "bytes": 4451028
+        },
+        {
+          "path": "/uploads/sample_art.webp",
+          "status": 200,
+          "bytes": 3985909
+        }
+      ],
+      "resources": [
+        {
+          "path": "/uploads/sample_art.webp",
+          "durationMs": 69
+        },
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "durationMs": 75
+        },
+        {
+          "path": "/uploads/sample_city.png",
+          "durationMs": 65
+        }
+      ]
+    },
+    {
+      "viewport": 1440,
+      "page": "detail",
+      "images": [
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "width": 3172,
+          "height": 3172,
+          "lazy": "lazy"
+        }
+      ],
+      "responses": [
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "status": 200,
+          "bytes": 4451028
+        }
+      ],
+      "resources": [
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "durationMs": 0
+        }
+      ]
+    },
+    {
+      "viewport": 390,
+      "page": "explore",
+      "images": [
+        {
+          "path": "/uploads/sample_art.webp",
+          "width": 3544,
+          "height": 4028,
+          "lazy": "lazy"
+        },
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "width": 3172,
+          "height": 3172,
+          "lazy": "lazy"
+        },
+        {
+          "path": "/uploads/sample_city.png",
+          "width": 7254,
+          "height": 4841,
+          "lazy": "lazy"
+        }
+      ],
+      "responses": [
+        {
+          "path": "/uploads/sample_city.png",
+          "status": 200,
+          "bytes": 3785028
+        },
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "status": 200,
+          "bytes": 4451028
+        },
+        {
+          "path": "/uploads/sample_art.webp",
+          "status": 200,
+          "bytes": 3985909
+        }
+      ],
+      "resources": [
+        {
+          "path": "/uploads/sample_art.webp",
+          "durationMs": 47
+        },
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "durationMs": 55
+        },
+        {
+          "path": "/uploads/sample_city.png",
+          "durationMs": 43
+        }
+      ]
+    },
+    {
+      "viewport": 390,
+      "page": "detail",
+      "images": [
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "width": 3172,
+          "height": 3172,
+          "lazy": "lazy"
+        }
+      ],
+      "responses": [
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "status": 200,
+          "bytes": 4451028
+        }
+      ],
+      "resources": [
+        {
+          "path": "/uploads/sample_sunset.jpg",
+          "durationMs": 0
+        }
+      ]
+    }
+  ],
+  "accessibility": [
+    {
+      "name": "light-public-home",
+      "violations": [
+        {
+          "id": "image-redundant-alt",
+          "impact": "minor",
+          "count": 3,
+          "selectors": [
+            [
+              "img[alt=\"Artwork demo image\"]"
+            ],
+            [
+              "img[alt=\"Sunset demo image\"]"
+            ],
+            [
+              "img[alt=\"City demo image\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 37
+    },
+    {
+      "name": "light-public-explore",
+      "violations": [
+        {
+          "id": "image-redundant-alt",
+          "impact": "minor",
+          "count": 3,
+          "selectors": [
+            [
+              "img[alt=\"Artwork demo image\"]"
+            ],
+            [
+              "img[alt=\"Sunset demo image\"]"
+            ],
+            [
+              "img[alt=\"City demo image\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 40
+    },
+    {
+      "name": "light-public-detail",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "light-public-protected",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 36
+    },
+    {
+      "name": "light-public-sign-in",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "count": 1,
+          "selectors": [
+            [
+              ".cl-internal-560t1i"
+            ]
+          ]
+        }
+      ],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 6
+        }
+      ],
+      "passes": 40
+    },
+    {
+      "name": "light-public-sign-up",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "count": 1,
+          "selectors": [
+            [
+              ".cl-internal-560t1i"
+            ]
+          ]
+        }
+      ],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 6
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "light-owner-upload",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 3
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "light-owner-gallery-empty",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "light-owner-detail-success",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "light-owner-delete-dialog",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 18
+    },
+    {
+      "name": "light-owner-edit",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "light-owner-form-error",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "dark-public-home",
+      "violations": [
+        {
+          "id": "image-redundant-alt",
+          "impact": "minor",
+          "count": 3,
+          "selectors": [
+            [
+              "img[alt=\"Artwork demo image\"]"
+            ],
+            [
+              "img[alt=\"Sunset demo image\"]"
+            ],
+            [
+              "img[alt=\"City demo image\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 37
+    },
+    {
+      "name": "dark-public-explore",
+      "violations": [
+        {
+          "id": "image-redundant-alt",
+          "impact": "minor",
+          "count": 3,
+          "selectors": [
+            [
+              "img[alt=\"Artwork demo image\"]"
+            ],
+            [
+              "img[alt=\"Sunset demo image\"]"
+            ],
+            [
+              "img[alt=\"City demo image\"]"
+            ]
+          ]
+        }
+      ],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 40
+    },
+    {
+      "name": "dark-public-detail",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "dark-public-protected",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 36
+    },
+    {
+      "name": "dark-public-sign-in",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "count": 1,
+          "selectors": [
+            [
+              ".cl-internal-560t1i"
+            ]
+          ]
+        }
+      ],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 5
+        }
+      ],
+      "passes": 40
+    },
+    {
+      "name": "dark-public-sign-up",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "count": 1,
+          "selectors": [
+            [
+              ".cl-internal-560t1i"
+            ]
+          ]
+        }
+      ],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 5
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "dark-owner-upload",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 2
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "dark-owner-gallery-empty",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "dark-owner-detail-success",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 41
+    },
+    {
+      "name": "dark-owner-delete-dialog",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 18
+    },
+    {
+      "name": "dark-owner-edit",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 42
+    },
+    {
+      "name": "dark-owner-form-error",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "count": 1
+        }
+      ],
+      "passes": 42
+    }
+  ]
+}
