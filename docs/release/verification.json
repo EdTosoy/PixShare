@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-24",
+  "theme": "Hallmark 2.0 Atelier, selected by user; warm paper and slate, no forest green",
+  "backend": {
+    "status": "PASS",
+    "passed": 141,
+    "skipped": 0,
+    "seconds": 18.58,
+    "realMinioCases": 14
+  },
+  "ruff": {
+    "status": "PASS",
+    "command": "installed Ruff check . (NixOS glibc loader)"
+  },
+  "basedpyright": {
+    "status": "PASS",
+    "errors": 0,
+    "warnings": 0
+  },
+  "frontendLint": {
+    "status": "PASS",
+    "command": "node node_modules/eslint/bin/eslint.js .",
+    "cwd": "web"
+  },
+  "frontendTypes": {
+    "status": "PASS",
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "cwd": "web"
+  },
+  "build": {
+    "status": "PASS",
+    "command": "NEXT_TELEMETRY_DISABLED=1 node node_modules/next/dist/bin/next build",
+    "next": "16.4.1"
+  },
+  "browser": {
+    "status": "PASS",
+    "passed": 30,
+    "skipped": 0,
+    "duration": "2.7m",
+    "genuineClerk": true,
+    "sandbox": true,
+    "command": "E2E_REQUIRE_AUTH=1 E2E_BASE_URL=http://localhost:3000 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=<installed Chromium> node node_modules/@playwright/test/cli.js test"
+  },
+  "hallmark": {
+    "status": "PASS static",
+    "files": 25,
+    "floorFailures": 0,
+    "reflexFindings": 0,
+    "openWarnings": 0,
+    "answeredFinish": 2,
+    "dismissedColorPairNotes": 4,
+    "linksKept": "10/10",
+    "handlersKept": "24/24",
+    "renderTier": "NOT RUN: no Puppeteer; Playwright captures substitute"
+  },
+  "imagePayload": {
+    "fixtureImages": 3,
+    "originalBytes": 3333388,
+    "selectedBytes": 91058,
+    "reductionPercent": 97.27,
+    "dpr": 1,
+    "viewports": [
+      1440,
+      768,
+      390
+    ],
+    "scope": "Normalized demo originals vs actual browser-selected representations, not latency/LCP"
+  },
+  "environment": {
+    "pytestDatabase": "pix_share_release_test",
+    "browserDatabase": "pix_share_release_e2e",
+    "databasePort": 55441,
+    "storage": "Dedicated local temporary directories; actual local MinIO for opt-in integration",
+    "apiReadBudget": 10000,
+    "cloudResourcesCreated": false
+  },
+  "limits": [
+    "No deployed live demo",
+    "Authenticated local suite is distinct from keyless public CI",
+    "Axe incomplete checks are retained, no conformance certification",
+    "Sentient uses official Fontshare browser service with fallback",
+    "No AWS policy or capacity claim"
+  ],
+  "screenshots": {
+    "before": 51,
+    "after": 53,
+    "publicPortfolio": 12,
+    "afterAxeViolations": 0,
+    "afterAxeIncomplete": 0,
+    "afterHorizontalOverflows": 0,
+    "actualFontsConfirmed": [
+      "Sentient",
+      "Hanken Grotesk"
+    ]
+  },
+  "privacy": {
+    "status": "PASS",
+    "configuredValuesPrinted": false,
+    "privateWorkingFilesExcluded": true
+  }
+}

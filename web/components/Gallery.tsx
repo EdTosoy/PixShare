@@ -39,14 +39,20 @@ export function Gallery({
     enabled: !personal || isSignedIn,
   });
   const posts = query.data?.slice(0, featured ? 6 : PAGE_SIZE) ?? [];
+  const hasNextPage = (query.data?.length ?? 0) > PAGE_SIZE;
+  const showPagination = !featured && (filters.page > 0 || hasNextPage);
+  const resultLabel = posts.length > 0 && (filters.page > 0 || hasNextPage)
+    ? `Images ${filters.page * PAGE_SIZE + 1} to ${filters.page * PAGE_SIZE + posts.length}`
+    : `${posts.length} ${posts.length === 1 ? "photograph" : "photographs"}`;
   return (
-    <section aria-label={featured ? "Featured images" : "Image gallery"}>
+    <section
+      className={featured ? "editorial-gallery featured-gallery" : "editorial-gallery"}
+      aria-label={featured ? "Featured images" : "Image gallery"}
+    >
       {!featured && (
         <div className="gallery-toolbar">
-          <p className="muted">
-            {personal
-              ? "Your images, all in one place."
-              : "A collection of different points of view."}
+          <p className="muted" role="status">
+            {query.isPending ? "Loading images…" : query.isError ? "Gallery unavailable" : resultLabel}
           </p>
           <div className="filter-controls">
             <label>
@@ -125,14 +131,14 @@ export function Gallery({
           ))}
         </div>
       )}
-      {!featured && (
+      {showPagination && (
         <nav className="pagination" aria-label="Gallery pagination">
           <button
             className="button secondary"
             disabled={filters.page === 0 || query.isPending}
             onClick={() => setFilters({ ...filters, page: filters.page - 1 })}
           >
-            ← Previous
+            Previous
           </button>
           <span aria-live="polite">Page {filters.page + 1}</span>
           <button
@@ -142,7 +148,7 @@ export function Gallery({
             }
             onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
           >
-            Next →
+            Next
           </button>
         </nav>
       )}

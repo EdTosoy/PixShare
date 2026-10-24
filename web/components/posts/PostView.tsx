@@ -48,7 +48,7 @@ export function PostView({ id, success }: { id: string; success?: string }) {
   return (
     <main id="main" className="page-shell detail-shell">
       <Link href="/explore" className="text-link">
-        ← Back to explore
+        Back to explore
       </Link>
       {post.isPending ? (
         <div className="skeleton skeleton-detail" role="status">

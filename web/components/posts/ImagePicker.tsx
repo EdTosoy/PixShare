@@ -5,7 +5,7 @@ import { imageDescription } from "@/lib/images";
 import type { Post } from "@/lib/types";
 import { PostImage } from "./PostImage";
 
-export const UPLOAD_HELP = "JPEG, PNG, or WebP · Up to 10 MB · 16 megapixels";
+export const UPLOAD_HELP = "JPEG, PNG, or WebP. Up to 10 MB and 16 megapixels.";
 export function ImagePicker({
   onChange,
   currentPost,
@@ -85,9 +85,6 @@ export function ImagePicker({
           </div>
         )}
         <label className="picker-label">
-          <span className="picker-symbol" aria-hidden="true">
-            ↑
-          </span>
           <strong>
             {selection?.name ??
               (currentPost ? "Replace this image" : "Drop your image here")}

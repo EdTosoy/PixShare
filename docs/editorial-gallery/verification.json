@@ -1,0 +1,96 @@
+{
+  "date": "2026-10-24",
+  "scope": "/explore only",
+  "checks": [
+    {
+      "check": "Frontend ESLint",
+      "command": "node node_modules/eslint/bin/eslint.js .",
+      "status": "PASS",
+      "cwd": "web"
+    },
+    {
+      "check": "TypeScript",
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "status": "PASS",
+      "cwd": "web"
+    },
+    {
+      "check": "Next.js production build",
+      "command": "NEXT_TELEMETRY_DISABLED=1 node node_modules/next/dist/bin/next build",
+      "status": "PASS",
+      "version": "16.4.1",
+      "cwd": "web"
+    },
+    {
+      "check": "Public Playwright",
+      "command": "E2E_BASE_URL=http://localhost:3000 node node_modules/@playwright/test/cli.js test --project=desktop --project=tablet --project=mobile",
+      "status": "PASS",
+      "passed": 24,
+      "skipped": 0,
+      "duration": "1.6m",
+      "cwd": "web"
+    },
+    {
+      "check": "Capture matrices",
+      "status": "PASS",
+      "beforeMainAndAlternatives": 34,
+      "afterMain": 30,
+      "beforeDenseAndAlternatives": 12,
+      "afterDense": 8,
+      "focus": 1,
+      "afterAxeScans": 38,
+      "afterAxeViolations": 0,
+      "overflow": 0,
+      "uncaughtPageErrors": 0
+    },
+    {
+      "check": "Hallmark static sweep",
+      "status": "NOT CLEAN",
+      "before": {
+        "floor": 11,
+        "reflex": 51,
+        "warn": 6
+      },
+      "after": {
+        "floor": 9,
+        "reflex": 50,
+        "warn": 5
+      },
+      "kept": {
+        "links": "2/2",
+        "handlers": "5/5"
+      },
+      "limitation": "Remaining findings are pre-existing shared styles outside this milestone; Puppeteer render unavailable; Playwright supplied captures."
+    },
+    {
+      "check": "Backend pytest",
+      "status": "SKIPPED",
+      "reason": "No backend-facing behavior or request contract changed."
+    },
+    {
+      "check": "Authenticated Clerk CRUD",
+      "status": "NOT RUN",
+      "reason": "Public Explore scope; auth code unchanged."
+    },
+    {
+      "check": "Firefox and WebKit",
+      "status": "NOT RUN",
+      "reason": "Chromium-only scope; existing host limitations."
+    }
+  ],
+  "environment": {
+    "database": "Fresh disposable pix_share_editorial_e2e",
+    "storage": "Local, dedicated /tmp directory",
+    "apiReadBudget": 10000,
+    "localOrigins": [
+      "http://localhost:3000",
+      "http://localhost:3001"
+    ],
+    "browserSandbox": true
+  },
+  "initialAttempts": {
+    "playwright": "Default read budget exhausted: 12 passed, 5 failed, 1 interrupted, 6 not run; corrected final run passed.",
+    "baselineDense": "Port 3001 CORS not initially allowed; corrected local API process configuration passed.",
+    "pnpm": "Host package-manager database/options failed; installed script executables passed."
+  }
+}

@@ -6,11 +6,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "PixShare — A place for your perspective",
-    template: "%s · PixShare",
+    default: "PixShare | Your photographs, together",
+    template: "%s | PixShare",
   },
   description:
-    "Discover a new perspective. A simple home for the photographs, moments, and ideas you want to share.",
+    "A simple online photo album. Upload photographs, add captions, and keep your moments together.",
 };
 
 export default function RootLayout({
@@ -19,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=sentient@300,400&display=swap" />
         <script
           dangerouslySetInnerHTML={{
             __html: `try{const t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch{}`,
@@ -37,8 +38,8 @@ export default function RootLayout({
           <Link className="brand" href="/">
             PixShare<span aria-hidden="true">.</span>
           </Link>
-          <p>A little more perspective.</p>
-          <Link href="/explore">Explore the gallery ↗</Link>
+          <p>A simple photo album.</p>
+          <Link href="/explore">Explore the gallery</Link>
         </footer>
       </body>
     </html>

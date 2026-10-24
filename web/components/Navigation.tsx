@@ -52,13 +52,14 @@ export function Navigation() {
             href="/me"
             aria-current={pathname === "/me" ? "page" : undefined}
           >
-            My gallery
+            My album
           </Link>
         </nav>
         <div className="nav-actions">
           <button
             className="theme-toggle"
             aria-label="Toggle color theme"
+            aria-pressed={theme === "dark"}
             title="Toggle color theme"
             onClick={() => {
               const next = readTheme() === "dark" ? "light" : "dark";
@@ -71,10 +72,13 @@ export function Navigation() {
               window.dispatchEvent(new Event("pixshare-theme"));
             }}
           >
-            <span aria-hidden="true">{theme === "dark" ? "☀" : "◐"}</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" />
+            </svg>
           </button>
           <Link className="button primary upload-nav" href="/upload">
-            <span aria-hidden="true">＋</span> Upload
+            Upload
             <span className="desktop-word"> image</span>
           </Link>
           {isLoaded &&

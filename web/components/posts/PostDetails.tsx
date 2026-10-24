@@ -3,7 +3,6 @@ export function PostDetails({ post }: { post: Post }) {
   const hasLongCaption = Boolean(post.caption && post.caption.length > 200);
   return (
     <section className="post-details">
-      <span className="eyebrow">A SHARED PERSPECTIVE</span>
       <h1>{hasLongCaption ? "The story behind this image" : post.caption?.trim() || "Untitled image"}</h1>
       {hasLongCaption && (
         <details className="post-caption">

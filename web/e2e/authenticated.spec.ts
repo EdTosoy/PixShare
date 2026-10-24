@@ -1,11 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { setupClerkTestingToken } from "@clerk/testing/playwright";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { missingAuth } from "./environment";
 import { auditAccessibility } from "./accessibility";
-import { API, deleteGeneratedUser, findClerkUsers, formSignIn, formSignOut, helperSignIn, sessionRequest } from "./auth-helpers";
+import { API, deleteGeneratedUser, findClerkUsers, formSignIn, formSignOut, helperSignIn, prepareClerkBrowser, sessionRequest } from "./auth-helpers";
 
 test.beforeEach(() => {
   test.skip(missingAuth.length > 0, `Missing: ${missingAuth.join(", ")}`);
@@ -173,7 +172,7 @@ test("a new user signs up through the Clerk form and can sign back in", async ({
   });
   expect(await findClerkUsers(email)).toHaveLength(0);
   try {
-    await setupClerkTestingToken({ page });
+    await prepareClerkBrowser(page);
     await page.goto("/sign-in");
     await page.getByRole("link", { name: /sign up/i }).click();
     await expect(page).toHaveURL(/\/sign-up$/);
@@ -243,7 +242,7 @@ test("real Clerk sign-in, upload, gallery, caption edit, replacement, ownership 
   await helperSignIn(page, process.env.E2E_USER_EMAIL!);
   await page.goto("/upload");
   await expect(
-    page.getByRole("heading", { name: /Share a perspective/ }),
+    page.getByRole("heading", { name: /Add a photograph/ }),
   ).toBeVisible();
   await page
     .getByLabel("Image", { exact: true })
@@ -317,7 +316,11 @@ test("real Clerk sign-in, upload, gallery, caption edit, replacement, ownership 
     expect(original.data.caption).toBe("");
     const publicPost = await request.get(`${API}/posts/${id}`);
     expect(publicPost.status()).toBe(200);
-    expect((await request.get(`${API}${original.data.url}`)).status()).toBe(200);
+    expect((await request.get(new URL(original.data.url, API + "/").href)).status()).toBe(200);
+    if (process.env.E2E_MEDIA_BASE_URL) {
+      expect(String(original.data.url).startsWith(process.env.E2E_MEDIA_BASE_URL + "/")).toBe(true);
+      expect(original.data.image?.variants.every((variant: { url: string }) => variant.url.startsWith(process.env.E2E_MEDIA_BASE_URL + "/"))).toBe(true);
+    }
     const context = await browser.newContext({ baseURL: new URL(page.url()).origin });
     try {
       const other = await context.newPage();
@@ -362,7 +365,7 @@ test("real Clerk sign-in, upload, gallery, caption edit, replacement, ownership 
       .getByRole("button", { name: "Delete post", exact: true })
       .click();
     await expect(page).toHaveURL(/\/me\?deleted=1$/);
-    await expect(page.getByRole("status")).toContainText("deleted");
+    await expect(page.getByRole("status").filter({ hasText: "Your post has been deleted." })).toBeVisible();
     expect((await sessionRequest(page, `/posts/${id}`)).status).toBe(404);
     deleted = true;
     await formSignOut(page);

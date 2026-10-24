@@ -41,7 +41,6 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   if (!session.isSignedIn)
     return (
       <div className="state-panel">
-        <span className="eyebrow">YOUR SPACE</span>
         <h1>Make yourself at home.</h1>
         <p>
           {session.configured
@@ -54,7 +53,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
           </Link>
         )}
         <Link className="text-link" href="/explore">
-          Explore images ↗
+          Explore images
         </Link>
       </div>
     );

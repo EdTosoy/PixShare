@@ -1,0 +1,1334 @@
+[
+  {
+    "device": "desktop",
+    "width": 1440,
+    "height": 1000,
+    "theme": "light",
+    "state": "explore",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 355.171875,
+        "height": 355.171875,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 29
+      },
+      {
+        "width": 312.484375,
+        "height": 355.15625,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 30
+      },
+      {
+        "width": 532.34375,
+        "height": 355.171875,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "desktop",
+    "width": 1440,
+    "height": 1000,
+    "theme": "light",
+    "state": "filtered",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 539.578125,
+        "height": 359.984375,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "desktop",
+    "width": 1440,
+    "height": 1000,
+    "theme": "light",
+    "state": "empty",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      },
+      {
+        "width": 158.703125,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "desktop",
+    "width": 1440,
+    "height": 1000,
+    "theme": "light",
+    "state": "loading",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "desktop",
+    "width": 1440,
+    "height": 1000,
+    "theme": "light",
+    "state": "error",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      },
+      {
+        "width": 103.46875,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "desktop",
+    "width": 1440,
+    "height": 1000,
+    "theme": "dark",
+    "state": "explore",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 355.171875,
+        "height": 355.171875,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 29
+      },
+      {
+        "width": 312.484375,
+        "height": 355.15625,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 30
+      },
+      {
+        "width": 532.34375,
+        "height": 355.171875,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "desktop",
+    "width": 1440,
+    "height": 1000,
+    "theme": "dark",
+    "state": "filtered",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 539.578125,
+        "height": 359.984375,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "desktop",
+    "width": 1440,
+    "height": 1000,
+    "theme": "dark",
+    "state": "empty",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      },
+      {
+        "width": 158.703125,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "desktop",
+    "width": 1440,
+    "height": 1000,
+    "theme": "dark",
+    "state": "loading",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "desktop",
+    "width": 1440,
+    "height": 1000,
+    "theme": "dark",
+    "state": "error",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      },
+      {
+        "width": 103.46875,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "tablet",
+    "width": 768,
+    "height": 1024,
+    "theme": "light",
+    "state": "explore",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 360,
+        "height": 360,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 29
+      },
+      {
+        "width": 316.734375,
+        "height": 359.984375,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 30
+      },
+      {
+        "width": 539.578125,
+        "height": 359.984375,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "tablet",
+    "width": 768,
+    "height": 1024,
+    "theme": "light",
+    "state": "filtered",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 539.578125,
+        "height": 359.984375,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "tablet",
+    "width": 768,
+    "height": 1024,
+    "theme": "light",
+    "state": "empty",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      },
+      {
+        "width": 158.703125,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "tablet",
+    "width": 768,
+    "height": 1024,
+    "theme": "light",
+    "state": "loading",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "tablet",
+    "width": 768,
+    "height": 1024,
+    "theme": "light",
+    "state": "error",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      },
+      {
+        "width": 103.46875,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "tablet",
+    "width": 768,
+    "height": 1024,
+    "theme": "dark",
+    "state": "explore",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 360,
+        "height": 360,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 29
+      },
+      {
+        "width": 316.734375,
+        "height": 359.984375,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 30
+      },
+      {
+        "width": 539.578125,
+        "height": 359.984375,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "tablet",
+    "width": 768,
+    "height": 1024,
+    "theme": "dark",
+    "state": "filtered",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 539.578125,
+        "height": 359.984375,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "tablet",
+    "width": 768,
+    "height": 1024,
+    "theme": "dark",
+    "state": "empty",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      },
+      {
+        "width": 158.703125,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "tablet",
+    "width": 768,
+    "height": 1024,
+    "theme": "dark",
+    "state": "loading",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "tablet",
+    "width": 768,
+    "height": 1024,
+    "theme": "dark",
+    "state": "error",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 125,
+        "height": 44
+      },
+      {
+        "width": 134,
+        "height": 44
+      },
+      {
+        "width": 103.46875,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "mobile",
+    "width": 390,
+    "height": 844,
+    "theme": "light",
+    "state": "explore",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 350,
+        "height": 350,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 29
+      },
+      {
+        "width": 350,
+        "height": 397.796875,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 30
+      },
+      {
+        "width": 350,
+        "height": 233.515625,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 167,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "mobile",
+    "width": 390,
+    "height": 844,
+    "theme": "light",
+    "state": "filtered",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 350,
+        "height": 233.515625,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 167,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "mobile",
+    "width": 390,
+    "height": 844,
+    "theme": "light",
+    "state": "empty",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 158.703125,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "mobile",
+    "width": 390,
+    "height": 844,
+    "theme": "light",
+    "state": "loading",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 167,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "mobile",
+    "width": 390,
+    "height": 844,
+    "theme": "light",
+    "state": "error",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 103.46875,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "controlContrast": [
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935,
+        5.1263970460198935
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "mobile",
+    "width": 390,
+    "height": 844,
+    "theme": "dark",
+    "state": "explore",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 350,
+        "height": 350,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 29
+      },
+      {
+        "width": 350,
+        "height": 397.796875,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 30
+      },
+      {
+        "width": 350,
+        "height": 233.515625,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 167,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "mobile",
+    "width": 390,
+    "height": 844,
+    "theme": "dark",
+    "state": "filtered",
+    "overflow": false,
+    "headings": 1,
+    "frames": [
+      {
+        "width": 350,
+        "height": 233.515625,
+        "fit": "contain",
+        "lazy": "lazy",
+        "variants": true,
+        "nameLength": 27
+      }
+    ],
+    "targets": [
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 167,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "mobile",
+    "width": 390,
+    "height": 844,
+    "theme": "dark",
+    "state": "empty",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 158.703125,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "mobile",
+    "width": 390,
+    "height": 844,
+    "theme": "dark",
+    "state": "loading",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 167,
+        "height": 44
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  },
+  {
+    "device": "mobile",
+    "width": 390,
+    "height": 844,
+    "theme": "dark",
+    "state": "error",
+    "overflow": false,
+    "headings": 1,
+    "frames": [],
+    "targets": [
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 167,
+        "height": 44
+      },
+      {
+        "width": 103.46875,
+        "height": 44.1875
+      }
+    ],
+    "axe": {
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ],
+      "controlContrast": [
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022,
+        7.947379532408022
+      ]
+    },
+    "pageErrors": 0
+  }
+]

@@ -6,11 +6,8 @@ export default function UploadPage() {
     <main id="main" className="page-shell form-shell">
       <AuthGate>
         <div className="page-heading">
-          <span className="eyebrow">SEEN BY YOU. SHARED WITH EVERYONE.</span>
-          <h1>
-            Share a perspective<span className="accent">.</span>
-          </h1>
-          <p>A moment doesn’t need to be extraordinary to be worth sharing.</p>
+          <h1>Add a photograph.</h1>
+          <p>Choose a photo and give it a caption.</p>
         </div>
         <PostForm />
       </AuthGate>

@@ -1,0 +1,52 @@
+[
+  {
+    "theme": "light",
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "targets": [
+          [
+            ".brand-mark"
+          ],
+          [
+            ".theme-toggle > span[aria-hidden=\"true\"]"
+          ]
+        ],
+        "checks": [
+          "color-contrast",
+          "color-contrast"
+        ]
+      }
+    ],
+    "violations": [],
+    "contrast": {
+      "text": 13.72,
+      "muted": 5.13,
+      "focus": 6.31,
+      "button": 6.64
+    }
+  },
+  {
+    "theme": "dark",
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "targets": [
+          [
+            ".brand-mark"
+          ]
+        ],
+        "checks": [
+          "color-contrast"
+        ]
+      }
+    ],
+    "violations": [],
+    "contrast": {
+      "text": 14.72,
+      "muted": 7.95,
+      "focus": 10.82,
+      "button": 9.85
+    }
+  }
+]

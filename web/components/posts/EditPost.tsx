@@ -55,11 +55,9 @@ function Editor({ id }: { id: string }) {
     <>
       <div className="page-heading">
         <Link href={`/posts/${id}`} className="text-link">
-          ← Back to image
+          Back to image
         </Link>
-        <h1>
-          Edit your perspective<span className="accent">.</span>
-        </h1>
+        <h1>Edit your photograph.</h1>
         <p>Update the caption or choose a new image.</p>
       </div>
       <PostForm key={post.data.id} post={post.data} />

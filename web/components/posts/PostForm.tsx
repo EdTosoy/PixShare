@@ -65,24 +65,26 @@ export function PostForm({ post }: { post?: Post }) {
             mutation.reset();
           }}
         />
-        <label className="field-label" htmlFor="caption">
-          Caption <span className="muted">(optional)</span>
-        </label>
-        <textarea
-          id="caption"
-          value={caption}
-          onChange={(event) => setCaption(event.target.value)}
-          rows={4}
-          maxLength={5000}
-          placeholder="What’s the story behind this image?"
-          aria-describedby="caption-help"
-        />
-        <p className="field-hint" id="caption-help">
-          A little context makes a moment go further. {caption.length}/5000
-        </p>
-        <p className="privacy-note">
-          Your image and caption will be visible to everyone.
-        </p>
+        <div className="form-copy">
+          <label className="field-label" htmlFor="caption">
+            Caption <span className="muted">(optional)</span>
+          </label>
+          <textarea
+            id="caption"
+            value={caption}
+            onChange={(event) => setCaption(event.target.value)}
+            rows={4}
+            maxLength={5000}
+            placeholder="What’s the story behind this image?"
+            aria-describedby="caption-help"
+          />
+          <p className="field-hint" id="caption-help">
+            A little context makes a moment go further. {caption.length}/5000
+          </p>
+          <p className="privacy-note">
+            Your image and caption will be visible to everyone.
+          </p>
+        </div>
       </fieldset>
       {mutation.isError && (
         <p ref={errorRef} tabIndex={-1} className="error-banner" role="alert">
@@ -112,7 +114,7 @@ export function PostForm({ post }: { post?: Post }) {
               : "Uploading…"
             : post
               ? "Save changes"
-              : "Share image ↗"}
+              : "Share image"}
         </button>
       </div>
       <p className="sr-only" role="status">

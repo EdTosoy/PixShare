@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type BrowserContext, type Page } from "@playwright/test";
 import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
 import { format } from "node:util";
 
@@ -31,6 +31,25 @@ console.error = (...args: unknown[]) => error(sanitizeDiagnostic(format(...args)
 
 export const API = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(/\/$/, "");
 
+const handshakeContexts = new WeakSet<BrowserContext>();
+
+export async function prepareClerkBrowser(page: Page) {
+  await setupClerkTestingToken({ page });
+  if (handshakeContexts.has(page.context())) return;
+  // The SDK's broad FAPI interceptor fetches through redirects, then assumes
+  // JSON. Handshake is a browser navigation: its redirects/Set-Cookie must reach
+  // the real browser, otherwise WebKit sees HTML and can enter a refresh loop.
+  await page.context().route(url => url.pathname === "/v1/client/handshake" &&
+    url.hostname === process.env.CLERK_FAPI, async route => {
+    if (!route.request().isNavigationRequest()) return route.fallback();
+    const url = new URL(route.request().url());
+    if (process.env.CLERK_TESTING_TOKEN)
+      url.searchParams.set("__clerk_testing_token", process.env.CLERK_TESTING_TOKEN);
+    await route.continue({ url: url.href });
+  });
+  handshakeContexts.add(page.context());
+}
+
 // Return only the response, never serialize a session token into the runner.
 export async function sessionRequest(page: Page, route: string, method = "GET", caption?: string) {
   return page.evaluate(async ({ api, route, method, caption }) => {
@@ -48,17 +67,19 @@ export async function sessionRequest(page: Page, route: string, method = "GET", 
 }
 
 export async function helperSignIn(page: Page, emailAddress: string) {
-  await setupClerkTestingToken({ page });
+  await prepareClerkBrowser(page);
   await page.goto("/");
   try {
     await clerk.signIn({ page, emailAddress });
   } catch {
     throw new Error("Clerk helper sign-in failed; check the dedicated development account");
   }
+  // Clerk's session promise can settle before React finishes the identity change.
+  await expect(page.locator(".cl-userButtonTrigger")).toBeVisible();
 }
 
 export async function formSignIn(page: Page, email: string) {
-  await setupClerkTestingToken({ page });
+  await prepareClerkBrowser(page);
   await page.goto("/sign-in");
   await page.locator('input[name="identifier"]').fill(email);
   const prepared = page.waitForResponse((response) =>
@@ -83,7 +104,13 @@ export async function formSignOut(page: Page) {
   await page.locator(".cl-userButtonTrigger").click();
   await page.getByRole("button", { name: /Sign out$/i }).click();
   await expect.poll(() => page.evaluate(() => Boolean(window.Clerk.session))).toBe(false);
-  await page.goto("/me");
+  // Let Clerk's sign-out redirect finish before starting another navigation.
+  await page.waitForURL(/\/$/, { waitUntil: "load" });
+  await expect(page.getByRole("link", { name: "Sign in", exact: true })).toBeVisible();
+  // Use the actual navigation control after sign-out rather than starting a
+  // competing full-document navigation during development cookie handoffs.
+  await page.getByRole("link", { name: "My album", exact: true }).click();
+  await expect(page).toHaveURL(/\/me$/);
   await expect(page.getByRole("heading", { name: "Make yourself at home." })).toBeVisible();
 }
 

@@ -5,6 +5,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { chromium, expect } from "@playwright/test";
 import { clerkSetup } from "@clerk/testing/playwright";
+import { auditAccessibility } from "../e2e/accessibility.ts";
 
 for (const name of [".env.e2e.local", ".env.local", ".env"])
   if (existsSync(name)) process.loadEnvFile(name);
@@ -13,7 +14,7 @@ const BASE = "http://localhost:3000";
 const phase = process.argv[2] ?? "before";
 if (!['empty', 'before', 'after', 'cleanup'].includes(phase) || process.env.UX_AUDIT_ISOLATED !== "1")
   throw new Error("Set UX_AUDIT_ISOLATED=1 and use empty/before/after/cleanup on a dedicated test stack");
-const root = path.resolve("ux-audit-artifacts");
+const root = path.resolve(process.env.UX_AUDIT_OUTPUT ?? "ux-audit-artifacts");
 const output = path.join(root, phase);
 await mkdir(output, { recursive: true });
 const stateFile = path.join(root, "posts.json");
@@ -43,6 +44,7 @@ async function contextFor(size, theme, signedIn = false) {
 }
 
 async function capture(page, name, { images = true } = {}) {
+  await page.evaluate(() => document.fonts.ready);
   if (images) {
     for (const img of await page.locator("main img").all()) {
       await img.scrollIntoViewIfNeeded();
@@ -68,6 +70,8 @@ async function capture(page, name, { images = true } = {}) {
       }).slice(0, 8).map(el => ({ tag: el.tagName, class: el.className })),
     };
   });
+  metrics.accessibility = await auditAccessibility(page);
+  expect(metrics.horizontalOverflow).toBe(false);
   await page.screenshot({
     path: path.join(output, name + ".jpg"),
     type: "jpeg", quality: 78, fullPage: true, animations: "disabled",
@@ -105,7 +109,8 @@ try {
     }
   } else {
     if (!state.ids.length) {
-      if (phase !== "before") throw new Error("Capture before evidence first");
+      if (phase === "after" && !existsSync(path.join(root, "before", "metrics.json")))
+        throw new Error("Capture before evidence first");
       const { context, page } = await contextFor(sizes[0], "light", true);
       await visit(page, "/upload", ".post-form");
       await page.getByLabel("Image", { exact: true }).setInputFiles(path.resolve("../demo/sample_sunset.jpg"));

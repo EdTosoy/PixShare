@@ -2,6 +2,79 @@ import { test, expect } from "@playwright/test";
 import { auditAccessibility } from "./accessibility";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const mediaUrl = (value: string) => new URL(value, API + "/").href;
+
+test("Explore preserves image composition, source order and layout while photos load", async ({ page, request }) => {
+  const posts = await (await request.get(`${API}/posts?limit=13&offset=0&sort=newest`)).json() as {
+    id: string; image?: { width: number; height: number } | null;
+  }[];
+  expect(posts.length).toBeGreaterThan(0);
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  await page.route(url => url.origin === new URL(API).origin && url.pathname.startsWith("/uploads/"), async route => {
+    await gate;
+    await route.continue();
+  });
+  try {
+    await page.goto("/explore", { waitUntil: "domcontentloaded" });
+    const cards = page.locator(".photo-card");
+    await expect(cards).toHaveCount(Math.min(posts.length, 12));
+    const boxes = () => page.locator(".photo-frame").evaluateAll(nodes => nodes.map(node => {
+      const { width, height, top, left } = node.getBoundingClientRect();
+      return { width, height, top: top + scrollY, left };
+    }));
+    const before = await boxes();
+    for (const [index, post] of posts.slice(0, 12).entries()) {
+      const card = cards.nth(index);
+      await expect(card).toHaveAttribute("href", `/posts/${post.id}`);
+      await expect(card.locator("img")).toHaveAttribute("loading", "lazy");
+      await expect(card.locator("img")).toHaveCSS("object-fit", "contain");
+      const ratio = post.image ? Math.min(2, Math.max(0.5, post.image.width / post.image.height)) : 4 / 3;
+      expect(before[index].width / before[index].height).toBeCloseTo(ratio, 2);
+      if (index > 0) {
+        expect(before[index].top).toBeGreaterThanOrEqual(before[index - 1].top - 0.1);
+        if (Math.abs(before[index].top - before[index - 1].top) < 0.1)
+          expect(before[index].left).toBeGreaterThan(before[index - 1].left);
+      }
+    }
+    release();
+    for (const img of await cards.locator("img").all()) {
+      await img.scrollIntoViewIfNeeded();
+      await img.evaluate(async (node: HTMLImageElement) => { await node.decode(); });
+    }
+    expect(await boxes()).toEqual(before);
+  } finally { release(); await page.unrouteAll({ behavior: "wait" }); }
+});
+
+test("Explore pagination uses real offsets, hides for one page and resets on filtering", async ({ page, request }) => {
+  const posts = await (await request.get(`${API}/posts?limit=25&sort=newest`)).json() as { id: string }[];
+  await page.goto("/explore");
+  await expect(page.locator(".photo-card")).toHaveCount(Math.min(posts.length, 12));
+  const pagination = page.getByRole("navigation", { name: "Gallery pagination" });
+  if (posts.length <= 12) {
+    await expect(pagination).toHaveCount(0);
+    return;
+  }
+  await expect(page.getByRole("button", { name: "Previous", exact: true })).toBeDisabled();
+  const nextRequest = page.waitForResponse(response => {
+    const url = new URL(response.url());
+    return url.origin === new URL(API).origin && url.pathname === "/posts" && url.searchParams.get("offset") === "12";
+  });
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  expect((await nextRequest).status()).toBe(200);
+  await expect(page.getByText("Page 2", { exact: true })).toBeVisible();
+  await expect(page.locator(".photo-card").first()).toHaveAttribute("href", `/posts/${posts[12].id}`);
+  if (posts.length <= 24) await expect(page.getByRole("button", { name: "Next", exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "Previous", exact: true }).click();
+  await expect(page.locator(".photo-card").first()).toHaveAttribute("href", `/posts/${posts[0].id}`);
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await expect(page.getByText("Page 2", { exact: true })).toBeVisible();
+  await page.getByLabel("Format").selectOption("image/png");
+  const png = await (await request.get(`${API}/posts?limit=13&file_type=image/png&sort=newest`)).json() as { id: string }[];
+  await expect(page.locator(".photo-card")).toHaveCount(Math.min(png.length, 12));
+  if (png.length <= 12) await expect(pagination).toHaveCount(0);
+  if (png.length > 0) await expect(page.locator(".photo-card").first()).toHaveAttribute("href", `/posts/${png[0].id}`);
+});
 
 test("public pages pass axe in both themes and reflow for keyboard users", async ({ page, request }) => {
   test.setTimeout(120_000);
@@ -36,7 +109,7 @@ test("responsive WebP variants reserve layout and fall back to the original on f
   expect(post, "Seed the isolated E2E database with variants before testing").toBeDefined();
   let release!: () => void;
   const gate = new Promise<void>(resolve => { release = resolve; });
-  const variantUrls = new Set(post!.image!.variants.map(variant => `${API}${variant.url}`));
+  const variantUrls = new Set(post!.image!.variants.map(variant => mediaUrl(variant.url)));
   await page.route(url => variantUrls.has(url.href), async route => { await gate; await route.continue(); });
   try {
     await page.goto(`/posts/${post!.id}`, { waitUntil: "domcontentloaded" });
@@ -57,7 +130,7 @@ test("responsive WebP variants reserve layout and fall back to the original on f
   await page.route(url => variantUrls.has(url.href), route => route.abort("failed"));
   await page.reload();
   const fallback = page.locator(".detail-image img");
-  await expect.poll(() => fallback.evaluate((node: HTMLImageElement, original) => node.complete && node.naturalWidth > 0 && node.currentSrc === original, `${API}${post!.url}`)).toBe(true);
+  await expect.poll(() => fallback.evaluate((node: HTMLImageElement, original) => node.complete && node.naturalWidth > 0 && node.currentSrc === original, mediaUrl(post!.url))).toBe(true);
   await expect(page.locator(".detail-image source")).toHaveCount(0);
 });
 test("public visitor browses real images, filters, sorts, and opens details", async ({
@@ -74,7 +147,7 @@ test("public visitor browses real images, filters, sorts, and opens details", as
   ).toBeGreaterThan(0);
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: /Life looks different/ }),
+    page.getByRole("heading", { name: /Your photographs, together/ }),
   ).toBeVisible();
   const cards = page.locator(".photo-card");
   await expect(cards.first()).toBeVisible();
@@ -108,8 +181,15 @@ test("public visitor browses real images, filters, sorts, and opens details", as
     /\.png$/,
   );
   await page.getByLabel("Sort by").selectOption("oldest");
-  await expect(page.getByText("Page 1", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Previous" })).toBeDisabled();
+  const filtered = await (await request.get(`${API}/posts?limit=13&file_type=image/png&sort=oldest`)).json() as { id: string }[];
+  await expect(cards.first()).toHaveAttribute("href", `/posts/${filtered[0].id}`);
+  const pagination = page.getByRole("navigation", { name: "Gallery pagination" });
+  if (filtered.length > 12) {
+    await expect(page.getByText("Page 1", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Previous" })).toBeDisabled();
+  } else {
+    await expect(pagination).toHaveCount(0);
+  }
   await page.locator(".photo-card").first().click();
   await expect(page.locator(".detail-image img")).toBeVisible();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -142,9 +222,11 @@ test("responsive layout, keyboard focus, theme persistence, and reduced motion",
   await expect(page).toHaveURL(/#main$/);
   const toggle = page.getByRole("button", { name: "Toggle color theme" });
   const target = await toggle.boundingBox();
-  expect(target?.width).toBeGreaterThanOrEqual(44);
-  expect(target?.height).toBeGreaterThanOrEqual(44);
+  // Firefox can report a 44px CSS target a fraction of a layout unit smaller.
+  expect(target?.width).toBeGreaterThanOrEqual(44 - 0.001);
+  expect(target?.height).toBeGreaterThanOrEqual(44 - 0.001);
   await toggle.click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", /^(dark|light)$/);
   const selected = await page.locator("html").getAttribute("data-theme");
   expect(["dark", "light"]).toContain(selected);
   await page.reload();

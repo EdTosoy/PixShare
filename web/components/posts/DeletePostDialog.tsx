@@ -52,7 +52,6 @@ export function DeletePostDialog({
         if (!isPending) onClose();
       }}
     >
-      <span className="eyebrow">YOUR GALLERY</span>
       <h2 id="delete-title">Delete this image?</h2>
       <p id="delete-description">
         This permanently removes your post and its image. This action cannot be

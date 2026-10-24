@@ -22,6 +22,9 @@ defaults:
   run:
     working-directory: web
 
+permissions:
+  contents: read
+
 jobs:
   web:
     name: Lint, typecheck, build, and browser tests
@@ -32,6 +35,7 @@ jobs:
       UPLOADS_DIR: /tmp/pixshare-e2e-uploads
       NEXT_PUBLIC_API_URL: http://localhost:8000
       NEXT_TELEMETRY_DISABLED: "1"
+      API_READ_LIMIT: "10000"
     services:
       postgres:
         image: postgres:17
@@ -87,7 +91,7 @@ jobs:
           uv run --no-sync python -m scripts.seed_db
           uv run --no-sync uvicorn app.main:app --host 127.0.0.1 --port 8000 > /tmp/pixshare-api.log 2>&1 &
           for attempt in {1..30}; do
-            if curl --fail --silent http://localhost:8000/health; then exit 0; fi
+            if curl --fail --silent http://localhost:8000/ready; then exit 0; fi
             sleep 1
           done
           exit 1
@@ -95,5 +99,23 @@ jobs:
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Permit the installed Chromium user namespace sandbox
+        # Ubuntu restricts user namespaces for binaries without an AppArmor
+        # profile. Permit only this installed browser, keeping its sandbox on.
+        # https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md
+        run: |
+          browser_path="$(node -e 'console.log(require("@playwright/test").chromium.executablePath())')"
+          echo "PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=$browser_path" >> "$GITHUB_ENV"
+          if [ "$(sysctl -n kernel.apparmor_restrict_unprivileged_userns 2>/dev/null || true)" = "1" ]; then
+            sudo tee /etc/apparmor.d/pixshare-ci-chromium > /dev/null <<EOF
+          abi <abi/4.0>,
+          include <tunables/global>
+          profile pixshare-ci-chromium "$browser_path" flags=(unconfined) {
+            userns,
+          }
+          EOF
+            sudo apparmor_parser -r /etc/apparmor.d/pixshare-ci-chromium
+          fi
+
       - name: Public browser journeys against PostgreSQL
-        run: pnpm test:e2e
+        run: pnpm test:e2e --project=desktop --project=tablet --project=mobile

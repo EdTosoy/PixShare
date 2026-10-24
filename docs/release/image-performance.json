@@ -1,0 +1,44 @@
+{
+  "method": "Actual browser source selection; real response-body bytes for the three normalized demo fixtures. Payload comparison, not production latency/LCP.",
+  "metrics": [
+    {
+      "viewport": 1440,
+      "dpr": 1,
+      "images": 3,
+      "originalBytes": 3333388,
+      "selectedBytes": 91058,
+      "reductionPercent": 97.27,
+      "selectedWidths": [
+        317,
+        540,
+        360
+      ]
+    },
+    {
+      "viewport": 768,
+      "dpr": 1,
+      "images": 3,
+      "originalBytes": 3333388,
+      "selectedBytes": 91058,
+      "reductionPercent": 97.27,
+      "selectedWidths": [
+        317,
+        540,
+        360
+      ]
+    },
+    {
+      "viewport": 390,
+      "dpr": 1,
+      "images": 3,
+      "originalBytes": 3333388,
+      "selectedBytes": 91058,
+      "reductionPercent": 97.27,
+      "selectedWidths": [
+        350,
+        350,
+        350
+      ]
+    }
+  ]
+}

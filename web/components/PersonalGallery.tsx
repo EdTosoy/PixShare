@@ -13,14 +13,11 @@ export function PersonalGallery({ deleted }: { deleted: boolean }) {
         )}
         <div className="page-heading split-heading">
           <div>
-            <span className="eyebrow">A COLLECTION THAT’S ALL YOU</span>
-            <h1>
-              My gallery<span className="accent">.</span>
-            </h1>
-            <p>Keep your favorite moments close.</p>
+            <h1>My album.</h1>
+            <p>Add a photograph or edit a caption.</p>
           </div>
           <Link className="button primary" href="/upload">
-            ＋ Upload image
+            Upload image
           </Link>
         </div>
         <Gallery personal />
