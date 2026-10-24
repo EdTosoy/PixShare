@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { imageDescription } from "@/lib/images";
+import { imageDescription, imageTitle } from "@/lib/images";
 import type { Post } from "@/lib/types";
 import { PostImage } from "./PostImage";
 
@@ -23,7 +23,7 @@ export function PostCard({ post }: { post: Post }) {
         />
       </div>
       <div className="photo-caption">
-        <p>{post.caption?.trim() || "Untitled image"}</p>
+        <p>{imageTitle(post)}</p>
       </div>
     </Link>
   );

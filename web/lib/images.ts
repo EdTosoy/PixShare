@@ -1,5 +1,9 @@
 import type { Post } from "./types";
 
+export function imageTitle(post: Pick<Post, "caption">): string {
+  return post.caption?.trim().split(/\r?\n/, 1)[0].trim() || "Untitled image";
+}
+
 // Captions are the available human descriptions. Keep accessible names concise;
 // filenames remain metadata, never a substitute for an image description.
 export function imageDescription(post: Pick<Post, "caption">): string {

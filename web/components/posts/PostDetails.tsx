@@ -1,10 +1,12 @@
 import type { Post } from "@/lib/types";
+import { imageTitle } from "@/lib/images";
 export function PostDetails({ post }: { post: Post }) {
-  const hasLongCaption = Boolean(post.caption && post.caption.length > 200);
+  const title = imageTitle(post);
+  const hasFullCaption = Boolean(post.caption && (post.caption.length > 200 || post.caption.trim() !== title));
   return (
     <section className="post-details">
-      <h1>{hasLongCaption ? "The story behind this image" : post.caption?.trim() || "Untitled image"}</h1>
-      {hasLongCaption && (
+      <h1>{title.length > 200 ? "The story behind this image" : title}</h1>
+      {hasFullCaption && (
         <details className="post-caption">
           <summary>Read full caption</summary>
           <p>{post.caption}</p>
