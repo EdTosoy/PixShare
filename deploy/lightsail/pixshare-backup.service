@@ -1,0 +1,13 @@
+[Unit]
+Description=Coordinated PixShare database and media backup
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+UMask=0077
+ExecStart=/bin/bash /opt/pixshare/current/backup.sh
+TimeoutStartSec=1800
+# Sensitive operational diagnostics go to a restricted local file, not CI output.
+StandardOutput=append:/var/backups/pixshare/backup.log
+StandardError=append:/var/backups/pixshare/backup.log

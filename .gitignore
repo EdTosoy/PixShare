@@ -36,6 +36,18 @@ staging-artifacts/
 *.sql
 !docker/postgres/init.sql
 
+# Terraform state, plans and private deployment inputs (keep provider locks).
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+backend.hcl
+crash.log
+deployment-artifacts/
+**/.vercel/
+
 # Agent scratch records and browser-audit ownership bookkeeping
 .hallmark/
 docs/release/screenshots/posts.json

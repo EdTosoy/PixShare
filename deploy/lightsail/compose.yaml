@@ -1,0 +1,138 @@
+name: pixshare-demo
+
+x-logging: &logging
+  driver: json-file
+  options: { max-size: "5m", max-file: "3" }
+
+services:
+  postgres:
+    image: ${PIXSHARE_POSTGRES_IMAGE:?Set a scanned PostgreSQL 17 image digest}
+    entrypoint: ["/bin/sh", "/tools/postgres-start.sh"]
+    environment:
+      POSTGRES_DB: pixshare
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    secrets: [postgres_password, app_password]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/10-pixshare.sh:ro
+      - ./postgres-start.sh:/tools/postgres-start.sh:ro
+    command: ["postgres", "-c", "max_connections=30", "-c", "shared_buffers=64MB", "-c", "log_statement=none", "-c", "log_min_error_statement=panic", "-c", "log_parameter_max_length_on_error=0"]
+    networks: [database]
+    # No host port, no public network, no database URI in health output.
+    mem_limit: 384m
+    cpus: 0.5
+    pids_limit: 128
+    shm_size: 64m
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+    stop_grace_period: 60s
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d pixshare -q"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 20s
+    logging: *logging
+
+  api:
+    image: ${PIXSHARE_API_IMAGE:?Set the scanned release registry digest}
+    env_file: ${PIXSHARE_API_ENV_FILE:-/etc/pixshare/api.env}
+    environment:
+      ENVIRONMENT: production
+      DATABASE_POOL_SIZE: "3"
+      DATABASE_MAX_OVERFLOW: "2"
+      UPLOADS_DIR: /app/uploads
+      STORAGE_PROVIDER: s3
+      # Only Caddy has this address; client-supplied forwarded values are replaced.
+      FORWARDED_ALLOW_IPS: ${PIXSHARE_CADDY_IP:-172.30.80.2}
+    command: ["/app/.venv/bin/uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--no-access-log", "--proxy-headers", "--limit-concurrency", "4", "--backlog", "64", "--timeout-keep-alive", "5", "--timeout-graceful-shutdown", "30"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    networks: [database, ingress]
+    volumes: ["legacy_uploads:/app/uploads"]
+    read_only: true
+    tmpfs: ["/tmp:size=192m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 896m
+    cpus: 1.0
+    pids_limit: 96
+    restart: unless-stopped
+    stop_grace_period: 35s
+    healthcheck:
+      test: ["CMD", "/app/.venv/bin/python", "-c", "import os,urllib.request; r=urllib.request.Request('http://127.0.0.1:8000/ready',headers={'Host':os.environ['ALLOWED_HOSTS'].split(',')[0]}); urllib.request.urlopen(r,timeout=4)"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    logging: *logging
+
+  caddy:
+    image: caddy:2.11.7-alpine@sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f
+    environment:
+      API_DOMAIN: api.pixshare.edtosoy.com
+      ACME_EMAIL: ${ACME_EMAIL:?Supply a private certificate contact email}
+    ports: ["80:80", "443:443"]
+    networks:
+      ingress: { ipv4_address: "${PIXSHARE_CADDY_IP:-172.30.80.2}" }
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    read_only: true
+    tmpfs: ["/tmp:size=16m,mode=1777"]
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 128m
+    cpus: 0.5
+    pids_limit: 64
+    restart: unless-stopped
+    stop_grace_period: 15s
+    logging: *logging
+
+  backup:
+    profiles: [operations]
+    image: ${PIXSHARE_API_IMAGE:?Set the scanned release registry digest}
+    user: "0:0"
+    entrypoint: ["/app/.venv/bin/python", "/tools/backup.py"]
+    env_file: ${PIXSHARE_BACKUP_ENV_FILE:-/etc/pixshare/backup.env}
+    volumes:
+      - ./backup.py:/tools/backup.py:ro
+      - ${PIXSHARE_BACKUP_DIR:-/var/backups/pixshare/work}:/work
+      - legacy_uploads:/legacy:ro
+    networks: [ingress]
+    read_only: true
+    tmpfs: ["/tmp:size=32m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 160m
+    cpus: 0.5
+    pids_limit: 32
+    restart: "no"
+    logging: *logging
+
+networks:
+  database:
+    internal: true
+  ingress:
+    ipam:
+      config: [{ subnet: "${PIXSHARE_INGRESS_SUBNET:-172.30.80.0/28}" }]
+
+volumes:
+  postgres_data:
+    name: pixshare_demo_postgres
+  legacy_uploads:
+    name: pixshare_demo_uploads
+  caddy_data:
+    name: pixshare_demo_caddy_data
+  caddy_config:
+    name: pixshare_demo_caddy_config
+
+secrets:
+  postgres_password:
+    file: ${PIXSHARE_POSTGRES_PASSWORD_FILE:-/etc/pixshare/postgres_password}
+  app_password:
+    file: ${PIXSHARE_APP_PASSWORD_FILE:-/etc/pixshare/app_password}

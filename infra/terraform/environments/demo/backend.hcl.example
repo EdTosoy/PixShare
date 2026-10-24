@@ -1,0 +1,3 @@
+bucket              = "REPLACE_WITH_BOOTSTRAPPED_STATE_BUCKET"
+allowed_account_ids = ["REPLACE_WITH_OWNER_CONFIRMED_ACCOUNT"]
+# Profile, region, native locking, encryption and key are fixed in versions.tf.

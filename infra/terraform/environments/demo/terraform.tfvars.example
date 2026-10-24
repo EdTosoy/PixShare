@@ -1,0 +1,13 @@
+expected_account_id = "REPLACE_WITH_OWNER_CONFIRMED_ACCOUNT"
+media_bucket_name   = "REPLACE_WITH_UNIQUE_MEDIA_BUCKET"
+ssh_public_key      = "ssh-ed25519 REPLACE_WITH_PUBLIC_KEY"
+admin_cidrs         = ["192.0.2.10/32"] # Replace with actual authorized administrator.
+
+preflight = {
+  account_owner_confirmed         = false
+  credits_and_expiry_confirmed    = false
+  required_services_confirmed     = false
+  budget_notifications_verified  = false
+  production_configuration_ready = false
+  estimated_gross_monthly_usd     = 0
+}

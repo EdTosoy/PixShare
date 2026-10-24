@@ -228,3 +228,7 @@ production operation, scale, compliance or a public live demo.
 and [deployment runbook](docs/DEPLOYMENT_RUNBOOK.md) describe the remaining
 operational work. Deployment templates are inert examples. No cloud infrastructure
 was provisioned or deployed for this release.
+
+[Terraform demo preparation](docs/TERRAFORM_DEPLOYMENT.md) covers the proposed
+Lightsail/S3/CloudFront deployment, application delivery, remaining manual setup,
+backups and teardown. Infrastructure creation and live verification remain on hold.

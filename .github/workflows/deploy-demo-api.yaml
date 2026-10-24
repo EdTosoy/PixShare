@@ -1,0 +1,128 @@
+name: Deliver demo API
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pixshare-demo-delivery
+  cancel-in-progress: false
+
+env:
+  RELEASE_SHA: 7bcac0f151c6b4773533238dfe11b0b5fd4659b5
+  API_REPOSITORY: ghcr.io/edtosoy/pixshare-api
+  TRIVY_IMAGE: aquasec/trivy:0.76.1@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main' && github.repository == 'EdTosoy/PixShare'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: pixshare-demo-build
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.publish.outputs.image }}
+    steps:
+      - name: Checkout deployment tooling
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          path: tooling
+      - name: Checkout the verified application release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ env.RELEASE_SHA }}
+          persist-credentials: false
+          path: release
+      - name: Build once from the exact release
+        run: |
+          set -euo pipefail
+          test "$(git -C release rev-parse HEAD)" = "$RELEASE_SHA"
+          docker build --platform linux/amd64 --file release/dockerfile \
+            --label "org.opencontainers.image.revision=$RELEASE_SHA" \
+            --tag "$API_REPOSITORY:$RELEASE_SHA" release
+      - name: Scan actual API, PostgreSQL and Caddy images
+        run: |
+          set -euo pipefail
+          mkdir scan
+          # This contains public image identifiers only, never working env files.
+          python3 - <<'PY' > /tmp/pixshare-images
+          import re
+          from pathlib import Path
+          compose = Path('tooling/deploy/lightsail/compose.yaml').read_text()
+          print(re.search(r'image: (caddy:[^\s]+)', compose)[1])
+          example = Path('tooling/deploy/lightsail/compose.env.example').read_text()
+          print(re.search(r'^PIXSHARE_POSTGRES_IMAGE=(.+)$', example, re.M)[1])
+          PY
+          for image in "$API_REPOSITORY:$RELEASE_SHA" $(cat /tmp/pixshare-images); do
+            name=$(printf '%s' "$image" | sha256sum | cut -c1-16)
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+              -v "$PWD/scan:/scan" "$TRIVY_IMAGE" image --scanners vuln \
+              --format json --output "/scan/$name.json" "$image"
+            docker run --rm -v "$PWD/scan:/scan" "$TRIVY_IMAGE" convert \
+              --format table --severity HIGH,CRITICAL --exit-code 1 "/scan/$name.json"
+          done
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$PWD/scan:/scan" "$TRIVY_IMAGE" image --format spdx-json \
+            --output /scan/api.spdx.json "$API_REPOSITORY:$RELEASE_SHA"
+      - name: Publish only after the security gate passes
+        id: publish
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$REGISTRY_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker push "$API_REPOSITORY:$RELEASE_SHA"
+          digest=$(docker buildx imagetools inspect "$API_REPOSITORY:$RELEASE_SHA" --format '{{json .Manifest.Digest}}' | tr -d '"')
+          [[ $digest =~ ^sha256:[0-9a-f]{64}$ ]]
+          printf 'image=%s@%s\n' "$API_REPOSITORY" "$digest" >> "$GITHUB_OUTPUT"
+          printf '%s@%s\n' "$API_REPOSITORY" "$digest" > scan/api-image
+      - name: Retain security reports and immutable image reference
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: demo-api-scan-${{ github.run_id }}
+          path: scan/
+          retention-days: 14
+
+  deploy:
+    needs: build
+    # Dedicated, trusted runner on an approved admin /32. Never open SSH to
+    # GitHub's shared address ranges or install a runner on the production VM.
+    runs-on: [self-hosted, linux, x64, pixshare-deploy]
+    timeout-minutes: 15
+    environment: pixshare-demo
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Transfer reviewed configuration and start the immutable release
+        env:
+          DEPLOY_HOST: ${{ vars.DEMO_SSH_HOST }}
+          SSH_KEY: ${{ secrets.DEMO_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEMO_SSH_KNOWN_HOSTS }}
+          API_IMAGE: ${{ needs.build.outputs.image }}
+        run: |
+          set -euo pipefail
+          umask 077
+          [[ $DEPLOY_HOST =~ ^[a-zA-Z0-9.-]+$ ]]
+          [[ $API_IMAGE =~ ^ghcr\.io/edtosoy/pixshare-api@sha256:[0-9a-f]{64}$ ]]
+          private=$(mktemp -d)
+          trap 'rm -rf "$private"' EXIT
+          printf '%s\n' "$SSH_KEY" > "$private/key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$private/known_hosts"
+          target="ubuntu@$DEPLOY_HOST"
+          bundle="/opt/pixshare/releases/$GITHUB_RUN_ID"
+          ssh_opts=(-i "$private/key" -o BatchMode=yes -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$private/known_hosts")
+          # Validated numeric bundle path intentionally expands on this runner.
+          # shellcheck disable=SC2029
+          ssh "${ssh_opts[@]}" "$target" "sudo install -d -m 0755 -o ubuntu -g ubuntu '$bundle'"
+          scp "${ssh_opts[@]}" deploy/lightsail/* "$target:$bundle/"
+          # shellcheck disable=SC2029
+          printf '%s\n' "$API_IMAGE" | ssh "${ssh_opts[@]}" "$target" "cat > '$bundle/api-image'"
+          # shellcheck disable=SC2029
+          ssh "${ssh_opts[@]}" "$target" "sudo bash '$bundle/deploy.sh' '$bundle'"

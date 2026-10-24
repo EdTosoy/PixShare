@@ -24,3 +24,9 @@ staging-artifacts/
 *.sql.gz
 *.log
 *.sql
+infra/
+deploy/lightsail/
+deployment-artifacts/
+*.tfstate*
+*.tfplan
+**/.vercel/

@@ -1,0 +1,98 @@
+name: Deliver demo frontend
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pixshare-demo-web
+  cancel-in-progress: false
+
+env:
+  RELEASE_SHA: 7bcac0f151c6b4773533238dfe11b0b5fd4659b5
+  VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+  # Owner sets a reviewed exact CLI version; never install latest during release.
+  VERCEL_CLI_VERSION: ${{ vars.VERCEL_CLI_VERSION }}
+
+jobs:
+  stage:
+    if: github.ref == 'refs/heads/main' && github.repository == 'EdTosoy/PixShare'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: pixshare-demo
+    outputs:
+      deployment: ${{ steps.stage.outputs.deployment }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ env.RELEASE_SHA }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+        with:
+          version: 11.11.0
+          run_install: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+      - name: Install the reviewed CLI and locked frontend dependencies
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+          [[ $VERCEL_CLI_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          test -n "$VERCEL_ORG_ID" && test -n "$VERCEL_PROJECT_ID"
+          npm install --global "vercel@$VERCEL_CLI_VERSION"
+          pnpm --dir web install --frozen-lockfile
+      - name: Check API readiness
+        run: curl --fail --silent --show-error https://api.pixshare.edtosoy.com/ready > /dev/null
+      - name: Pull this project's production configuration
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production
+      - name: Confirm project root and build
+        run: |
+          node - <<'JS'
+          const fs = require('fs');
+          const p = JSON.parse(fs.readFileSync('.vercel/project.json'));
+          if (p.projectId !== process.env.VERCEL_PROJECT_ID || p.orgId !== process.env.VERCEL_ORG_ID || p.settings?.rootDirectory !== 'web') {
+            throw new Error('Expected the dedicated PixShare project rooted at web/');
+          }
+          JS
+          vercel build --prod
+      - name: Stage production build without changing the live alias
+        id: stage
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -euo pipefail
+          deployment=$(vercel deploy --prebuilt --prod --skip-domain)
+          DEPLOYMENT_URL="$deployment" node - <<'JS'
+          const value = process.env.DEPLOYMENT_URL;
+          const url = new URL(value);
+          if(url.protocol !== 'https:' || url.origin !== value || !url.hostname.endsWith('.vercel.app')) process.exit(1);
+          JS
+          printf 'deployment=%s\n' "$deployment" >> "$GITHUB_OUTPUT"
+      # .vercel contains pulled secrets. It must never be a workflow artifact.
+
+  promote:
+    needs: stage
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: pixshare-demo-live
+    steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24
+      - name: Promote the same production artifact after environment approval
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          DEPLOYMENT_URL: ${{ needs.stage.outputs.deployment }}
+        run: |
+          set -euo pipefail
+          [[ $VERCEL_CLI_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          npm install --global "vercel@$VERCEL_CLI_VERSION"
+          vercel promote "$DEPLOYMENT_URL" --yes
+          curl --fail --silent --show-error https://pixshare.edtosoy.com/explore > /dev/null
+          echo 'HTTPS responds. Real Clerk/ownership/media/recovery acceptance is still required.'
