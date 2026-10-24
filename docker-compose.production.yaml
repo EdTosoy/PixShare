@@ -1,0 +1,60 @@
+# Standalone example: external PostgreSQL/S3 and an existing HTTPS ingress.
+# Review/inject configuration before use; never run this against live data in an audit.
+name: pixshare-production
+services:
+  api:
+    image: ${PIXSHARE_API_IMAGE:?Set an immutable release image}
+    env_file: ${PIXSHARE_API_ENV_FILE:-.env.production}
+    environment:
+      ENVIRONMENT: production
+    command: ["/app/.venv/bin/uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log", "--limit-concurrency", "8", "--backlog", "128", "--timeout-keep-alive", "5", "--timeout-graceful-shutdown", "30"]
+    ports: ["127.0.0.1:8000:8000"]
+    volumes: ["legacy_uploads:/app/uploads"]
+    read_only: true
+    tmpfs: ["/tmp:size=384m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 1g
+    cpus: 1.0
+    pids_limit: 128
+    restart: unless-stopped
+    stop_grace_period: 35s
+    healthcheck:
+      test: ["CMD", "/app/.venv/bin/python", "-c", "import os,urllib.request; r=urllib.request.Request('http://127.0.0.1:8000/ready',headers={'Host':os.environ['ALLOWED_HOSTS'].split(',')[0]}); urllib.request.urlopen(r,timeout=5)"]
+      interval: 15s
+      timeout: 6s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+  web:
+    image: ${PIXSHARE_WEB_IMAGE:?Set an immutable release image}
+    environment:
+      PIXSHARE_ENVIRONMENT: production
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:?Supply the production Clerk server secret}
+      CLERK_AUTHORIZED_PARTIES: ${CLERK_AUTHORIZED_PARTIES:?Supply exact HTTPS frontend origins}
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:?Must match the image build}
+    ports: ["127.0.0.1:3000:3000"]
+    read_only: true
+    tmpfs: ["/tmp:size=128m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 1g
+    cpus: 1.0
+    pids_limit: 128
+    restart: unless-stopped
+    stop_grace_period: 35s
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/favicon.ico').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 6s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+volumes:
+  legacy_uploads:
+    external: true
+    name: ${PIXSHARE_UPLOADS_VOLUME:?Set the EXISTING legacy uploads volume}

@@ -1,0 +1,24 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyUnencryptedTransport",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource": ["arn:aws:s3:::REPLACE_BUCKET-staging", "arn:aws:s3:::REPLACE_BUCKET-staging/*"],
+      "Condition": {"Bool": {"aws:SecureTransport": "false"}}
+    },
+    {
+      "Sid": "PublicImagesThroughOnlyThisDistribution",
+      "Effect": "Allow",
+      "Principal": {"Service": "cloudfront.amazonaws.com"},
+      "Action": "s3:GetObject",
+      "Resource": [
+        "arn:aws:s3:::REPLACE_BUCKET-staging/pixshare/staging/*/original.*",
+        "arn:aws:s3:::REPLACE_BUCKET-staging/pixshare/staging/*/variants/*.webp"
+      ],
+      "Condition": {"StringEquals": {"AWS:SourceArn": "arn:aws:cloudfront::REPLACE_ACCOUNT_ID:distribution/REPLACE_DISTRIBUTION_ID"}}
+    }
+  ]
+}

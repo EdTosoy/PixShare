@@ -1,7 +1,7 @@
 # Image delivery and API compatibility
 
 Post endpoints retain all existing fields and return an additional nullable
-`image` object. There is no database migration or URL rewrite:
+`image` object. There is no database migration or rewrite of existing URLs:
 
 ```json
 {
@@ -62,17 +62,23 @@ It does not claim optimization succeeded or retry encoding during reads.
 
 Versioned derivative URLs use `Cache-Control: public, max-age=31536000, immutable`.
 Changes to encoder policy must bump the variant version and produce new URLs.
-Original delivery retains its existing ETag/Last-Modified behavior. Cache hits
+Local original delivery retains its existing ETag/Last-Modified behavior. S3
+originals use unique immutable keys and the same long cache lifetime. Cache hits
 may outlive physical deletion, as with any public media; cached URLs are not an
 authorization mechanism.
 
 ## Replacement, deletion, and failure
 
-`Storage.upload()` returns the original URL and owns its derivative bundle.
+`Storage.upload()` returns a durable original reference and owns its derivative
+bundle. Local references are URLs; S3 references are internal `s3://` identifiers.
+Serialization resolves public original and variant URLs without exposing storage
+credentials. The HTTP API never returns these internal references.
 `Storage.describe()` optionally exposes the bundle without changing models.
 `Storage.delete(original_url)` attempts both original and bundle cleanup, even
-when removing the original fails. Only local `/uploads/` filenames are accepted;
-foreign URLs and traversal are ignored, and bundle symlinks are not followed.
+when removing the original fails. Local deletion accepts only `/uploads/`
+filenames and never follows bundle symlinks. S3 deletion accepts only the
+configured bucket/prefix and canonical original-key format. Foreign locations and
+traversal are ignored.
 
 The API preserves its existing transaction order and row locking. A failed
 database commit cleans every new object and retains old media. Successful
@@ -111,8 +117,36 @@ actual-width WebP descriptors according to responsive `sizes` and its pixel
 density; it can still load the original if WebP is unsupported, metadata is null,
 or a derivative request fails. Gallery sources load lazily; details/editor
 previews load eagerly. Existing CSS reserves the image frame before loading.
-The browser directly fetches public media from the API, so no Next private-IP
+The browser directly fetches public media from the API or the configured public
+S3/CDN base. Relative and absolute URLs use the same component, so no Next private-IP
 optimizer allowance or new image service is needed.
 
 See [Phase 8 measurements and verification](PHASE_8_REPORT.md) for actual payload
 reductions, the retained large legacy fixture, test results, and browser limits.
+
+## S3-compatible storage
+
+With `STORAGE_PROVIDER=s3`, original responses use an absolute public URL such as
+`https://media.example.test/pixshare/media/<group>/original.jpg`; variant URLs
+use the same base plus `variants/v1-640.webp`. The database stores the internal
+`s3://bucket/pixshare/media/<group>/original.jpg` reference. Changing only the
+public/CDN base needs no database rewrite. Changing the bucket or key prefix
+requires a separately planned migration; it is not automatic.
+
+S3 bundles use a private manifest as a publication marker, written after every
+variant succeeds. `describe()` validates its size and namespace, then resolves
+variant keys into public URLs. It does not HEAD every variant on each read.
+Absent, malformed, inaccessible or overlarge manifests produce `image: null`;
+externally missing variants fall back to the original in the browser. Original
+PUT failures fail the upload; optional encoding/variant failures preserve the
+original. Invalid uploads are still rejected by the existing content validation.
+
+The original and every derivative belong to one unique group. Replacement and
+deletion preserve the existing commit-first lifecycle for both providers. S3
+batch deletion checks individual errors, and cleanup failures remain visible as
+sanitized warnings. Versioned buckets need an explicit noncurrent-version
+retention policy: normal deletion does not purge historical versions.
+
+See [Phase 9 configuration, security and verification](PHASE_9_REPORT.md). The
+legacy backfill is a local-filesystem tool; no backfill or existing-data migration
+was performed during Phase 9.

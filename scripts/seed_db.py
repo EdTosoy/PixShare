@@ -6,15 +6,16 @@ Usage:
 
 The script:
 - Creates the demo user if it does not exist.
-- Copies demo images from /app/demo to /app/uploads.
+- Creates bounded, format-correct new demo copies in runtime storage.
+- Preserves existing stored images and repository demo originals.
 - Creates database records for demo images if they do not exist.
 - Is safe to run multiple times.
 """
 
 import asyncio
-import shutil
 from pathlib import Path
 
+from PIL import Image, ImageOps
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
@@ -93,7 +94,16 @@ async def seed() -> None:
 
             # Copy the fixture into runtime storage if necessary.
             if not upload_path.exists():
-                _ = shutil.copy2(source_path, upload_path)
+                # Bundled legacy fixtures can have mismatched suffixes and
+                # exceed today's decode budget. Normalize only a NEW demo copy;
+                # existing stored files and repository originals stay intact.
+                with Image.open(source_path) as original:
+                    image = ImageOps.exif_transpose(original)
+                    image.thumbnail((1920, 1920))
+                    image.convert("RGB").save(
+                        upload_path,
+                        format={"image/jpeg": "JPEG", "image/png": "PNG", "image/webp": "WEBP"}[sample["file_type"]],
+                    )
                 files_copied += 1
 
             _ = await storage.ensure_variants(post_url)

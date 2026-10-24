@@ -8,10 +8,11 @@ requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.19.0",
     "asyncpg>=0.31.0",
-    "clerk-backend-api>=6.0.1",
+    "boto3>=1.43.118",
+    "clerk-backend-api>=7.0.0",
     "fastapi[standard]>=0.141.1",
     "greenlet>=3.5.4",
-    "pillow>=12.3.0",
+    "pillow>=13.0.0",
     "pydantic-settings>=2.15.0",
     "sqlalchemy[asyncio]>=2.0.51",
     "uvicorn[standard]>=0.52.1",
@@ -20,6 +21,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "basedpyright>=1.39.9",
+    "boto3-stubs[s3]>=1.43.118",
     "httpx>=0.28.1",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
@@ -40,4 +42,13 @@ lint.flake8-bugbear.extend-immutable-calls = [
     "fastapi.Path",
     "fastapi.Body",
     "fastapi.Depends",
+]
+
+# Minimum patched versions for transitive runtime security dependencies.
+[tool.uv]
+constraint-dependencies = [
+    "certifi>=2026.10.19",
+    "cryptography>=50.0.2",
+    "pyjwt>=2.15.1",
+    "urllib3>=2.8.0",
 ]

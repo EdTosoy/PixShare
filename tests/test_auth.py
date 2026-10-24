@@ -3,6 +3,7 @@ from unittest.mock import patch
 import pytest
 from clerk_backend_api.security.types import AuthStatus, RequestState
 from fastapi import HTTPException, Request
+from fastapi.security import HTTPAuthorizationCredentials
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import select
 
@@ -199,6 +200,7 @@ async def test_require_auth_returns_signed_in_state():
         result = require_auth(
             request=request,
             settings=settings,
+            _credentials=HTTPAuthorizationCredentials(scheme="Bearer", credentials="unit-test-session"),
         )
 
     assert result is state

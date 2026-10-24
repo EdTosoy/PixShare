@@ -8,6 +8,7 @@ __pycache__
 .pyright
 *.pyc
 .env
+.env.*
 uploads/*
 
 web/
@@ -15,3 +16,11 @@ web/
 .codex/
 .aws/
 .env*
+
+backups/
+staging-artifacts/
+*.dump
+*.backup
+*.sql.gz
+*.log
+*.sql

@@ -4,3 +4,4 @@ node_modules
 .clerk
 test-results
 playwright-report
+staging-artifacts

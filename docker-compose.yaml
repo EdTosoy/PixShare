@@ -6,13 +6,26 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
     environment:
-      ENVIRONMENT: development
+      ENVIRONMENT: ${ENVIRONMENT:-development}
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/pix_share
       CLERK_PUBLISHABLE_KEY: ${CLERK_PUBLISHABLE_KEY:-}
       CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:-}
       CLERK_JWT_KEY: ${CLERK_JWT_KEY:-}
       CLERK_AUTHORIZED_PARTIES: ${CLERK_AUTHORIZED_PARTIES:-http://localhost:3000}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      STORAGE_PROVIDER: ${STORAGE_PROVIDER:-local}
+      S3_BUCKET: ${S3_BUCKET:-}
+      S3_PREFIX: ${S3_PREFIX:-pixshare/media}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_ENDPOINT_URL: ${S3_ENDPOINT_URL:-}
+      S3_PUBLIC_BASE_URL: ${S3_PUBLIC_BASE_URL:-}
+      S3_ADDRESSING_STYLE: ${S3_ADDRESSING_STYLE:-auto}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-}
+      S3_SESSION_TOKEN: ${S3_SESSION_TOKEN:-}
+      S3_CONNECT_TIMEOUT: ${S3_CONNECT_TIMEOUT:-3}
+      S3_READ_TIMEOUT: ${S3_READ_TIMEOUT:-10}
+      S3_MAX_ATTEMPTS: ${S3_MAX_ATTEMPTS:-3}
     command: ["sh", "-c", "uv run --no-sync alembic upgrade head && uv run --no-sync uvicorn app.main:app --host 0.0.0.0 --port 8000"]
     depends_on:
       postgres:
@@ -20,7 +33,7 @@ services:
     volumes:
       - uploads:/app/uploads
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready', timeout=5)"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -29,6 +42,7 @@ services:
     build:
       context: web
       args:
+        PIXSHARE_ENVIRONMENT: ${PIXSHARE_ENVIRONMENT:-development}
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:-}
     ports:

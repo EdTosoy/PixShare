@@ -14,7 +14,7 @@ from sqlalchemy.pool import NullPool
 
 from app.api.dependencies import get_current_user
 from app.db.session import get_async_session
-from app.main import app
+from app.main import app, request_limits
 from app.models.post import Post
 from app.models.user import User
 
@@ -84,6 +84,8 @@ async def client(test_user: User):
 
 @pytest_asyncio.fixture(autouse=True)
 async def clean_database():
+    # Each independent case starts with a fresh bounded rate-limit window.
+    request_limits.buckets.clear()
     async with session_factory() as session:
         _ = await session.execute(delete(Post))
         _ = await session.execute(delete(User))

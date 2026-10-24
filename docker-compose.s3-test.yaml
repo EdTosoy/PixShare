@@ -1,0 +1,21 @@
+# Explicitly opt-in; never used by the default local-filesystem stack.
+name: pixshare-media-test
+services:
+  minio:
+    build:
+      context: dev/minio
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY_ID:?Set a dedicated local test access key in an ignored env file}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_ACCESS_KEY:?Set a dedicated local test secret in an ignored env file}
+      MINIO_BROWSER: "off"
+    ports:
+      - "127.0.0.1:${PIXSHARE_S3_PORT:-59000}:9000"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 3s
+      timeout: 2s
+      retries: 30
+volumes:
+  minio_data:

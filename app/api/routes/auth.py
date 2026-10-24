@@ -18,12 +18,13 @@ def require_auth(
         Depends(http_bearer),
     ] = None,
 ) -> RequestState:
+    # This API uses explicit Bearer sessions, never browser ambient cookies.
+    if _credentials is None:
+        raise HTTPException(status_code=401, detail="Unauthorized", headers={"WWW-Authenticate": "Bearer"})
     if not settings.clerk_secret_key and not settings.clerk_jwt_key:
         raise HTTPException(
-            status_code=401 if _credentials is None else 503,
-            detail="Unauthorized"
-            if _credentials is None
-            else "Authentication is not configured",
+            status_code=503,
+            detail="Authentication is not configured",
             headers={"WWW-Authenticate": "Bearer"},
         )
 

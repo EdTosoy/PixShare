@@ -12,12 +12,20 @@ class Storage(ABC):
         filename: str,
         content_type: str,
     ) -> str:
-        """Upload a file and return its URL."""
+        """Upload and return a durable reference (local URL or owned s3:// key)."""
 
     @abstractmethod
     async def delete(self, url: str) -> None:
-        """Delete a file by its URL."""
+        """Delete an original and its variants by their durable reference."""
 
     async def describe(self, url: str) -> ImageInfo | None:  # pyright: ignore[reportUnusedParameter]
         """Optional responsive derivatives; legacy/unsupported objects return None."""
         return None
+
+    def public_url(self, reference: str) -> str:
+        """Resolve a durable reference at response time; never return signed URLs."""
+        return reference
+
+
+class StorageUnavailable(Exception):
+    """Safe API error; never attach SDK messages, request details, or credentials."""

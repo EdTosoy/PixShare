@@ -24,44 +24,46 @@ and remaining operational work, not claims of a production rollout.
   parsing occurs before route validation. Apply ingress rate/concurrency limits.
 - Containers run as nonroot. Local Compose ports bind to loopback and database
   credentials are for development. `/health` is liveness, not DB readiness.
-  Add readiness checks and authenticated operational access in deployment config.
+  `/ready` now checks database/table access with a deadline. Keep operational
+  access restricted; readiness does not verify Clerk, S3 or the complete schema.
 - Images are public and preserve their original bytes, including metadata.
   Define metadata stripping, moderation, retention, takedown and account deletion
   policies for the intended product; these are not implemented by this MVP.
 
-## Storage and S3-compatible investigation
+## Storage deployment
 
-The existing `Storage` interface supports `upload(BinaryIO, filename,
-content_type) -> URL` and `delete(URL)`. Local disk is implemented and remains
-the free default. A future S3 adapter can use the same route lifecycle without
-changing Post records or endpoint contracts.
+Local disk remains the default. The implemented S3-compatible adapter uses boto3
+with SigV4, conditional original writes, bounded retries/timeouts and immutable
+object groups. It shares the existing image limits, variants and commit-first
+lifecycle. Select it with `STORAGE_PROVIDER=s3`; configure `S3_BUCKET`,
+`S3_PREFIX`, `S3_REGION` and `S3_PUBLIC_BASE_URL` server-side. AWS normally leaves
+`S3_ENDPOINT_URL` unset and uses an IAM role; compatible services set their HTTPS
+endpoint and addressing style. Explicit credentials are optional server secrets.
 
-Proposed adapter design (not installed or exercised here):
+Configure a public image/CDN origin before enabling new writes. Prefer a private
+S3 bucket behind a public CloudFront distribution with origin access control;
+if serving a bucket directly, grant anonymous GET only on original/variant paths.
+Never permit anonymous listing, writes, deletes or manifest reads. Browser
+uploads still go through the Clerk-authenticated API and ownership checks.
+Do not disable bucket security globally to get a test passing.
 
-1. Add an optional `boto3` dependency and select the adapter in `get_storage()`
-   with explicit bucket, endpoint, region and public media-base configuration.
-   Keep credentials in the standard server-side AWS credential chain.
-2. Upload a random immutable object key using `upload_fileobj`, setting the
-   validated ContentType. Run synchronous SDK work in a worker thread.
-   [Boto3 upload contract](https://docs.aws.amazon.com/boto3/latest/reference/services/s3/client/upload_fileobj.html).
-3. Return a stable HTTPS media/CDN URL. Store durable identifiers, never an
-   expiring signed URL, in `Post.url`. If images become private, add signed-read
-   URL generation at response time and update the public API contract explicitly.
-4. Delete only keys whose URL belongs to the configured media namespace.
-   Retry transient failures and retain the route's commit-first ordering.
-   Account for bucket versioning: deletion can create a delete marker instead
-   of purging older bytes. [Boto3 deletion behavior](https://docs.aws.amazon.com/boto3/latest/reference/services/s3/client/delete_object.html).
-5. Validate the adapter against a local Moto server using dummy credentials,
-   a custom endpoint, and real SDK HTTP calls. No cloud account is required.
-   Moto supports both path/host bucket addressing and custom S3 endpoints.
-   [Moto S3 reference](https://docs.getmoto.org/en/latest/docs/services/s3.html).
-   This is adapter integration evidence, not proof of a particular vendor's IAM,
-   CDN, multipart or consistency behavior; test those before a real rollout.
+Grant the API role only prefix-scoped ListBucket plus GetObject, PutObject and
+DeleteObject for its media namespace. No ACL or bucket-management permission is
+needed at runtime. Establish encryption, backups, lifecycle and noncurrent-version
+retention policies independently. Delete markers are not a purge of historical
+versions; object-lock retention may block cleanup. Test the actual deployment's
+IAM, TLS, CDN, caching and restore behavior before rollout.
 
-LocalStorage's persistent volume is suitable for a single API instance. Multiple
-replicas require a shared filesystem or the object-store adapter. The frontend
-currently downloads originals directly; cache headers and thumbnail/CDN sizing
-should be designed together when scaling image traffic.
+The local volume is still required for existing `/uploads/` records. Retain the S3
+configuration if switching new writes back to local. Neither switch migrates
+existing data. Public-base changes are resolved at read time; bucket/prefix
+changes require a separate migration. Multiple replicas can share object storage,
+but legacy local files still require shared storage or a planned migration.
+
+[Phase 9](PHASE_9_REPORT.md) documents the isolated real MinIO compatibility
+environment, restart test, commands and results. It provisions no AWS resources.
+The pinned community MinIO server is archived upstream and is used only as a
+local test fixture, not a production storage recommendation.
 
 ## Cross-resource failure limits
 
@@ -70,10 +72,13 @@ clean new files and preserve existing files. Cleanup failures after commit leave
 an orphan rather than a database row referencing missing media. A process crash
 between storage write and commit can also leave an orphan.
 
-Reconciliation is manual: compare storage keys with committed Post URLs, use a
-conservative grace period for in-flight uploads, review candidates, and remove
-only confirmed unreferenced objects. Do not automate deletion against live media
-without a reviewed retention policy. A durable cleanup outbox is a future option
+S3 reconciliation is operator-controlled via `scripts.reconcile_media`, dry-run
+by default. Review its private report, pause and drain all media writers, retain a
+conservative grace period, then explicitly opt into removal. It rechecks object
+age and database references before deleting each candidate group. It does not
+automatically retry post-commit cleanup or inspect historical object versions.
+Local-filesystem orphan reconciliation remains manual. Do not automate deletion
+against live media without a reviewed retention policy. A durable cleanup outbox is a future option
 if real failure volume warrants it; it is unnecessary for local MVP operation.
 
 A commit followed by a response-refresh failure can produce 500 even though the
@@ -81,3 +86,17 @@ write succeeded. Automatic create retries can duplicate posts; the frontend does
 not automatically retry mutations. An idempotency-key contract would be needed
 for transparent create retry. Offset pagination is stable for a fixed dataset;
 concurrent additions/removals can shift page boundaries.
+
+## Phase 10 release candidate
+
+Production configuration now fails closed for development Clerk secrets, missing
+HTTPS origin allowlists and missing API hostnames. The API requires explicit
+Bearer credentials, bounds raw bodies before multipart parsing and supplies a
+bounded per-process rate limiter. Shared ingress limits are still required.
+Database pool/acquire/command timeouts and readiness are configurable.
+
+Use the [Phase 10 report](PHASE_10_REPORT.md) and
+[deployment runbook](DEPLOYMENT_RUNBOOK.md) for current audit results, patched
+dependency versions, isolated recovery evidence, production examples and hard
+release gates. Existing Phase 8 images are incompatible rollback targets after
+S3 writes; no public deployment is approved by these local checks.

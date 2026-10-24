@@ -1,0 +1,12 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Principal": {"Federated": "arn:aws:iam::REPLACE_ACCOUNT_ID:oidc-provider/oidc.render.com/REPLACE_WORKSPACE_ID"},
+    "Action": "sts:AssumeRoleWithWebIdentity",
+    "Condition": {"StringEquals": {
+      "oidc.render.com/REPLACE_WORKSPACE_ID:aud": "sts.amazonaws.com",
+      "oidc.render.com/REPLACE_WORKSPACE_ID:sub": "workspace:REPLACE_WORKSPACE_ID:environment:REPLACE_ENVIRONMENT_ID:service:REPLACE_SERVICE_ID"
+    }}
+  }]
+}

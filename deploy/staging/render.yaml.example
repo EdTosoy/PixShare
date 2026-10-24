@@ -1,0 +1,50 @@
+# REVIEW TEMPLATE ONLY. Applying it creates BILLABLE resources; approval required.
+# Replace EVERY example/REPLACE value, then validate with the current Render CLI.
+services:
+  - type: web
+    name: pixshare-staging-api
+    runtime: image
+    image:
+      url: ghcr.io/REPLACE_OWNER/pixshare-api@sha256:REPLACE_VERIFIED_DIGEST
+    region: singapore
+    plan: 1c-2g
+    numInstances: 1
+    healthCheckPath: /ready
+    # Adapter honors Render PORT and converts its internal DB URI for asyncpg.
+    dockerCommand: /app/.venv/bin/python -m scripts.render_start
+    # DATABASE_URL below must already use asyncpg with ?ssl=require for Alembic.
+    preDeployCommand: /app/.venv/bin/alembic upgrade head
+    maxShutdownDelaySeconds: 40
+    domains: [api.stage.example.invalid]
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: ALLOWED_HOSTS
+        value: api.stage.example.invalid,REPLACE_SERVICE.onrender.com
+      - key: CORS_ORIGINS
+        value: https://app.stage.example.invalid
+      - key: CLERK_AUTHORIZED_PARTIES
+        value: https://app.stage.example.invalid
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: STORAGE_PROVIDER
+        value: s3
+      - key: S3_BUCKET
+        value: REPLACE_UNIQUE_NAME-staging
+      - key: S3_PREFIX
+        value: pixshare/staging
+      - key: S3_REGION
+        value: ap-southeast-1
+      - key: S3_PUBLIC_BASE_URL
+        value: https://media.stage.example.invalid
+      - key: AWS_ROLE_ARN
+        sync: false
+databases:
+  - name: pixshare-staging-db
+    region: singapore
+    plan: 0.5c-1g
+    postgresMajorVersion: "17"
+    diskSizeGB: 10
+    ipAllowList: []

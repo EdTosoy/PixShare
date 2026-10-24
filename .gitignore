@@ -7,8 +7,36 @@ wheels/
 *.egg-info
 
 .env
+.env.*
+!.env.example
+media-reports/
 uploads/
 
 # Virtual environments
 .venv
 .direnv/
+
+# Private operational data and generated artifacts
+.env*
+!.env.example
+!.env.production.example
+.aws/
+backups/
+staging-artifacts/
+*.dump
+*.backup
+*.sql.gz
+*.sqlite*
+*.log
+.pytest_cache/
+.ruff_cache/
+*.pem
+*.key
+*.p12
+*.sql
+!docker/postgres/init.sql
+
+# Agent scratch records and browser-audit ownership bookkeeping
+.hallmark/
+docs/release/screenshots/posts.json
+docs/release/screenshots/cleanup/

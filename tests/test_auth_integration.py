@@ -142,3 +142,12 @@ async def test_rejects_expired_wrong_origin_and_wrong_signature(
         )
         assert response.status_code == 401
         assert response.json()["detail"] == "Unauthorized"
+
+
+@pytest.mark.asyncio
+async def test_valid_cookie_session_cannot_replace_explicit_api_bearer(signed_client: SignedClient):
+    client, token, _, _, _ = signed_client
+    # The JWT is genuinely signed by the fixture's trusted key. The API must
+    # reject ambient cookies even when that same token is valid as a Bearer.
+    assert (await client.get("/users/me", headers={"Cookie": f"__session={token}"})).status_code == 401
+    assert (await client.get("/users/me", headers={"Authorization": f"Bearer {token}"})).status_code == 200

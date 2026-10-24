@@ -5,6 +5,7 @@ from app.storage.base import Storage
 
 async def post_response(post: Post, storage: Storage) -> PostResponse:
     result = PostResponse.model_validate(post)
+    result.url = storage.public_url(post.url)
     result.image = await storage.describe(post.url)
     return result
 
