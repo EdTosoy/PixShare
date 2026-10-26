@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import { useSyncExternalStore } from "react";
@@ -36,9 +37,13 @@ export function Navigation() {
     <header className="site-header">
       <div className="nav-shell">
         <Link href="/" className="brand" aria-label="PixShare home">
-          <span className="brand-mark" aria-hidden="true">
-            p.
-          </span>
+          <Image
+            className="brand-mark"
+            src="/favicon-48x48.png"
+            width={32}
+            height={32}
+            alt=""
+          />
           PixShare
         </Link>
         <nav aria-label="Main navigation" className="main-nav">

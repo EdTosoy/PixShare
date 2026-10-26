@@ -173,17 +173,11 @@ button:disabled {
   white-space: nowrap;
 }
 .brand-mark {
-  display: grid;
-  place-items: center;
-  background: transparent;
-  color: var(--foreground);
-  border: 1px solid var(--line);
+  display: block;
   width: 32px;
   height: 32px;
-  border-radius: var(--radius);
-  font-size: 28px;
-  line-height: 1;
-  padding-bottom: 4px;
+  flex-shrink: 0;
+  object-fit: contain;
 }
 .main-nav {
   display: flex;

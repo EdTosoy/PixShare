@@ -11,6 +11,10 @@ export const metadata: Metadata = {
   },
   description:
     "A simple online photo album. Upload photographs, add captions, and keep your moments together.",
+  manifest: "/site.webmanifest",
+  icons: {
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({
