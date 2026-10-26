@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pixshare-media-reader",
+  "main": "src/index.ts",
+  // Matches the workerd runtime bundled with Wrangler 4.152.0.
+  "compatibility_date": "2026-10-19",
+  "workers_dev": true,
+  "preview_urls": false,
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "pixshare-media",
+      "remote": false
+    }
+  ]
+}
