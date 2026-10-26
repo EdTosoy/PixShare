@@ -1,0 +1,9 @@
+Tool: built-in image_gen (background-extraction, transparent background).
+Reference: web/assets/original.png
+
+Use case: background-extraction. Edit the supplied PixShare logo. Remove ONLY the outer off-white square canvas/background, replacing it with genuine alpha transparency. Preserve the three overlapping rounded photo cards exactly: dark brown rear card, tan middle card, cream front frame and tan/dark wavy photo interior, existing colors, proportions, positions, shading, grain and rounded edges. The cream front card border and its entire interior remain opaque; do not remove the light parts of the mark. Keep the same square composition and surrounding transparent margins. No redesign, added outline, text, new shadows, crop, or recoloring. Output a clean transparent PNG suitable for resizing to a navigation logo and favicon.
+
+Outputs:
+- web/assets/logo-transparent.png: edited source, outside public assets.
+- web/public/favicon-48x48.png: 48px navigation mark.
+- web/app/favicon.ico: browser icon with 16px, 32px and 48px frames.
